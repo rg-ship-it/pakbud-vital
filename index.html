@@ -1,5 +1,8 @@
 
 
+
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -105,45 +108,60 @@
     }
 
     .label {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: max-content;
       background: linear-gradient(90deg, #fde047, #f59e0b);
       color: #111827;
       padding: 10px 16px;
       border-radius: 999px;
       font-weight: 900;
       font-size: 14px;
-      margin-bottom: 14px;
+      box-shadow: 0 10px 25px rgba(250, 204, 21, .18);
+      white-space: nowrap;
+    }
+
+    .brandLine {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(180px, 260px) minmax(360px, 1fr) minmax(120px, 260px);
+      align-items: start;
+      gap: 18px;
+      margin-bottom: 16px;
     }
 
     h1 {
-  font-size: clamp(30px, 5vw, 58px);
-  font-weight: 900;
-  letter-spacing: -1px;
-  line-height: 1.05;
+      justify-self: center;
+      width: min(100%, 760px);
+      margin-top: 2px;
+      text-align: center;
+      font-size: clamp(34px, 4.2vw, 68px);
+      font-weight: 1000;
+      letter-spacing: 1px;
+      line-height: .95;
+      text-transform: uppercase;
+      white-space: nowrap;
+      background: linear-gradient(92deg, #ecfeff 0%, #a7f3d0 20%, #67e8f9 42%, #d9f99d 63%, #ffffff 82%, #86efac 100%);
+      background-size: 260% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbowFlow 6s linear infinite;
+      filter: drop-shadow(0 0 9px rgba(34, 211, 238, .35)) drop-shadow(0 10px 26px rgba(0, 0, 0, .55));
+    }
 
-  background: linear-gradient(
-    90deg,
-    #ff9aa2 0%,
-    #ffd6a5 16%,
-    #fdffb6 32%,
-    #caffbf 48%,
-    #9bf6ff 64%,
-    #a0c4ff 80%,
-    #bdb2ff 100%
-  );
-
-  background-size: 400% auto;
-
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  animation: rainbowFlow 8s linear infinite;
-
-  text-shadow:
-    0 0 8px rgba(255,255,255,.18),
-    0 0 18px rgba(191,219,254,.18),
-    0 0 26px rgba(255,255,255,.12);
-}
+    h1::after {
+      content: "";
+      display: block;
+      width: min(78%, 520px);
+      height: 4px;
+      margin: 10px auto 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(125, 211, 252, .92), rgba(190, 242, 100, .86), transparent);
+      box-shadow: 0 0 20px rgba(103, 232, 249, .45);
+    }
 
 @keyframes rainbowFlow {
   0% {
@@ -163,11 +181,18 @@
 }
 
     .top {
+      position: relative;
+      z-index: 2;
       display: flex;
       justify-content: space-between;
       gap: 20px;
       flex-wrap: wrap;
       align-items: flex-start;
+    }
+
+    .controlPanel {
+      width: 100%;
+      max-width: 760px;
     }
 
     .dateRow {
@@ -786,6 +811,124 @@
       text-shadow: 0 2px 12px rgba(0,0,0,.45);
     }
 
+
+
+    /* === RAPIH NAVIGASI TANGGAL: SUSUNAN KIRI, SEJAJAR, RESPONSIVE === */
+    .dateRow {
+      width: 100%;
+      max-width: 760px;
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: max-content max-content minmax(180px, max-content) max-content;
+      align-items: center;
+      justify-content: start;
+      column-gap: 10px;
+      row-gap: 10px;
+    }
+
+    .dateRow + .dateRow {
+      margin-top: 10px;
+    }
+
+    .date {
+      min-width: 180px;
+      margin: 0;
+      padding: 0 4px;
+      white-space: nowrap;
+      color: rgba(255,255,255,.92);
+      font-size: clamp(15px, 2vw, 18px);
+      font-weight: 900;
+      letter-spacing: .2px;
+      text-align: left;
+      line-height: 1.2;
+    }
+
+    .monthBtn {
+      min-height: 40px;
+      border: 0;
+      border-radius: 14px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.14);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 8px 18px rgba(0,0,0,.16);
+      transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+    }
+
+    .monthBtn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.20);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 10px 22px rgba(0,0,0,.22);
+    }
+
+    .todayBtn {
+      background: linear-gradient(90deg, #facc15, #fb923c) !important;
+      color: #111827 !important;
+      box-shadow: 0 8px 20px rgba(251,146,60,.23);
+    }
+
+    @media (max-width: 720px) {
+      .dateRow {
+        max-width: 100%;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+
+      .dateRow .date {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        min-width: 0;
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: rgba(255,255,255,.08);
+        text-align: center;
+        white-space: normal;
+      }
+
+      .dateRow .monthBtn {
+        width: 100%;
+        min-height: 38px;
+        padding: 10px 8px;
+        font-size: 12px;
+      }
+    }
+
+
+    @media (max-width: 760px) {
+      .brandLine {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        justify-self: start;
+        text-align: left;
+        white-space: normal;
+        font-size: clamp(34px, 12vw, 52px);
+      }
+
+      h1::after {
+        margin-left: 0;
+        width: 82%;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .dateRow {
+        grid-template-columns: 1fr;
+      }
+
+      .dateRow .date {
+        grid-column: auto;
+      }
+    }
+
   </style>
 </head>
 
@@ -795,22 +938,25 @@
       <div class="roseDecor roseOne">🌹</div>
       <div class="roseDecor roseTwo">🌹</div>
       <div class="roseDecor roseThree">🌹</div>
+      <div class="brandLine">
+        <div class="label">💧MURNI AIR GUNUNG</div>
+        <h1>PAK BUD WATER</h1>
+        <div aria-hidden="true"></div>
+      </div>
       <div class="top">
-        <div>
-          <div class="label">💧MURNI AIR GUNUNG</div>
-          <h1>PAK BUD WATER</h1>
+        <div class="controlPanel">
           <div class="dateRow">
-            <button class="monthBtn" onclick="changeMonth(-1)">‹ Bulan Sebelum</button>
+            <button class="monthBtn" onclick="changeMonth(-1)">‹ Bulan Sebelumnya</button>
             <button class="monthBtn todayBtn" onclick="goToday()">Bulan Ini</button>
             <p class="date" id="tanggal"></p>
-            <button class="monthBtn" onclick="changeMonth(1)">Bulan Next ›</button>
+            <button class="monthBtn" onclick="changeMonth(1)">Bulan Berikutnya ›</button>
           </div>
 
           <div class="dateRow">
-            <button class="monthBtn" onclick="changeDay(-1)">‹ Hari Sebelum</button>
+            <button class="monthBtn" onclick="changeDay(-1)">‹ Hari Sebelumnya</button>
             <button class="monthBtn todayBtn" onclick="goTodayDay()">Hari Ini</button>
             <p class="date" id="tanggalHarian"></p>
-            <button class="monthBtn" onclick="changeDay(1)">Hari Next ›</button>
+            <button class="monthBtn" onclick="changeDay(1)">Hari Berikutnya ›</button>
           </div>
           <p class="statusLive" id="statusLive">Menghubungkan ke Firebase...</p>
         </div>
