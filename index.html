@@ -1,1 +1,497 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Ruangan Premium Live Firebase</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+    body { min-height: 100vh; color: white; background: #020617; overflow-x: hidden; }
+    body::before { content: ""; position: fixed; inset: 0; z-index: -2; background: radial-gradient(circle at 15% 20%, rgba(0,195,255,.35), transparent 28%), radial-gradient(circle at 85% 15%, rgba(255,0,110,.28), transparent 30%), radial-gradient(circle at 50% 90%, rgba(255,214,10,.20), transparent 34%), #020617; }
+    body::after { content: ""; position: fixed; inset: -50%; z-index: -1; background: linear-gradient(120deg, transparent, rgba(255,255,255,.13), transparent); animation: hidup 13s linear infinite; }
+    @keyframes hidup { from { transform: translateX(-30%) translateY(-20%) rotate(0deg); } to { transform: translateX(30%) translateY(20%) rotate(360deg); } }
+    .container { max-width: 1560px; margin: auto; padding: 24px; }
+    .header { border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.10); backdrop-filter: blur(18px); border-radius: 28px; padding: 26px; box-shadow: 0 25px 80px rgba(0,0,0,.45); margin-bottom: 28px; }
+    .label { display: inline-block; background: linear-gradient(90deg, #fde047, #f59e0b); color: #111827; padding: 10px 16px; border-radius: 999px; font-weight: 900; font-size: 14px; margin-bottom: 14px; }
+    h1 { font-size: clamp(30px, 5vw, 58px); font-weight: 900; letter-spacing: -1px; }
+    .dateRow { margin-top: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .date { color: rgba(255,255,255,.82); font-size: 18px; font-weight: 800; }
+    .monthBtn { border: 0; border-radius: 12px; padding: 9px 12px; background: rgba(255,255,255,.14); color: white; font-weight: 900; cursor: pointer; }
+    .todayBtn { background: linear-gradient(90deg, #facc15, #fb923c); color: #111827; }
+    .top { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: end; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(115px, 1fr)); gap: 12px; margin-top: 16px; }
+    .stat { background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: 16px; text-align: center; }
+    .stat small { color: rgba(255,255,255,.6); text-transform: uppercase; font-weight: 700; }
+    .stat b { display: block; font-size: 34px; margin-top: 4px; }
+    .tools { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .search, .roomSelect { padding: 14px 18px; border-radius: 18px; border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.35); color: white; font-size: 16px; outline: none; }
+    .search { width: min(520px, 100%); }
+    .addBtn { border: 0; border-radius: 18px; padding: 14px 18px; background: linear-gradient(90deg, #22c55e, #14b8a6); color: #052e16; font-weight: 900; cursor: pointer; box-shadow: 0 12px 28px rgba(20,184,166,.28); }
+    .reportBtn { background: linear-gradient(90deg, #38bdf8, #6366f1); color: white; }
+    .statusLive { margin-top: 12px; color: rgba(255,255,255,.75); font-size: 13px; font-weight: 800; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 26px; }
+    .card { position: relative; overflow: hidden; border-radius: 30px; border: 1px solid rgba(255,255,255,.18); padding: 18px; box-shadow: 0 25px 70px rgba(0,0,0,.5); animation: naik .7s ease both; }
+    @keyframes naik { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+    .card::before { content: ""; position: absolute; width: 260px; height: 260px; right: -100px; top: -100px; background: rgba(255,255,255,.12); filter: blur(30px); border-radius: 50%; }
+    .room-D { background: linear-gradient(135deg, #4c0519, #172554, #083344); }
+    .room-E { background: linear-gradient(135deg, #451a03, #4c0519, #2e1065); }
+    .room-F { background: linear-gradient(135deg, #064e3b, #020617, #1e3a8a); }
+    .room-G { background: linear-gradient(135deg, #312e81, #581c87, #831843); }
+    .room-H { background: linear-gradient(135deg, #1c1917, #7f1d1d, #9a3412); }
+    .room-head { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .room-title small { color: rgba(255,255,255,.65); letter-spacing: 5px; text-transform: uppercase; font-weight: 800; }
+    .room-title h2 { font-size: 48px; line-height: 1; }
+    .stockPanel { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; justify-content: end; }
+    .total-box { background: rgba(255,255,255,.12); border-radius: 18px; padding: 12px 16px; text-align: right; min-width: 110px; }
+    .total-box small { color: rgba(255,255,255,.68); font-weight: 800; }
+    .total-box b { display: block; font-size: 26px; }
+    .editStockBtn { border: 0; border-radius: 18px; padding: 12px 14px; background: #facc15; color: #111827; font-weight: 900; cursor: pointer; }
+    .tableWrap { position: relative; overflow-x: auto; border-radius: 20px; border: 1px solid rgba(255,255,255,.1); }
+    table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,.28); min-width: 820px; table-layout: fixed; }
+    th:nth-child(1), td:nth-child(1) { width: 32%; }
+    th:nth-child(2), td:nth-child(2) { width: 18%; }
+    th:nth-child(3), td:nth-child(3) { width: 22%; }
+    th:nth-child(4), td:nth-child(4) { width: 28%; }
+    th { background: #facc15; color: #0f172a; text-transform: uppercase; font-size: 12px; padding: 13px 10px; text-align: left; white-space: nowrap; }
+    td { padding: 11px 10px; border-top: 1px solid rgba(255,255,255,.12); font-weight: 800; vertical-align: middle; }
+    tr:nth-child(odd) td { background: rgba(255,255,255,.055); }
+    tr:nth-child(even) td { background: rgba(7,89,133,.24); }
+    tr:hover td { background: rgba(255,255,255,.16); }
+    .center { text-align: center; }
+    .badge { display: inline-block; border-radius: 999px; padding: 7px 11px; font-size: 11px; font-weight: 900; white-space: nowrap; box-shadow: 0 8px 18px rgba(0,0,0,.25); }
+    .lunas { background: #34d399; color: #022c22; }
+    .belum { background: #ef4444; color: white; }
+    .action { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+    .edit, .delete { border: 0; border-radius: 10px; padding: 8px 10px; color: white; font-weight: 900; cursor: pointer; font-size: 11px; }
+    .edit { background: #f59e0b; } .delete { background: #dc2626; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,.72); display: none; align-items: flex-start; justify-content: center; z-index: 20; padding: 16px; overflow-y: auto; }
+    .modal.show { display: flex; }
+    .formBox { width: min(460px, 100%); background: linear-gradient(145deg, rgba(15,23,42,.98), rgba(30,41,59,.98)); border: 1px solid rgba(255,255,255,.18); border-radius: 26px; padding: 22px; box-shadow: 0 25px 80px rgba(0,0,0,.6); margin: 30px 0; max-height: calc(100vh - 60px); overflow-y: auto; }
+    .formBox h3 { font-size: 26px; margin-bottom: 16px; }
+    .reportHeader { position: sticky; top: -22px; z-index: 4; background: linear-gradient(145deg, rgba(15,23,42,.98), rgba(30,41,59,.98)); padding: 0 0 14px 0; }
+    .closeX { float: right; border: 0; border-radius: 999px; width: 36px; height: 36px; background: #ef4444; color: white; font-weight: 900; cursor: pointer; }
+    .reportTableWrap { max-height: 70vh; overflow: auto; border-radius: 20px; border: 1px solid rgba(255,255,255,.1); }
+    .reportTableWrap thead th { position: sticky; top: 0; z-index: 3; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; text-transform: uppercase; color: rgba(255,255,255,.62); font-weight: 900; margin-bottom: 6px; }
+    .field input, .field select { width: 100%; padding: 13px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.28); color: white; outline: none; font-size: 15px; font-weight: 800; }
+    .field select option { color: #111827; }
+    .note { color: rgba(255,255,255,.65); font-size: 12px; line-height: 1.45; margin-top: -3px; margin-bottom: 12px; }
+    .formAction { display: flex; gap: 10px; margin-top: 18px; }
+    .saveBtn, .cancelBtn { flex: 1; border: 0; border-radius: 14px; padding: 13px; cursor: pointer; font-weight: 900; }
+    .saveBtn { background: #22c55e; color: #052e16; } .cancelBtn { background: rgba(255,255,255,.14); color: white; }
+    @media (max-width: 900px) { .room-head { align-items: flex-start; flex-direction: column; } .stockPanel { justify-content: flex-start; width: 100%; } }
+    @media (max-width: 560px) { .container { padding: 12px; } .stats { grid-template-columns: 1fr; } .card { padding: 12px; border-radius: 22px; } .search { width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="top">
+        <div>
+          <div class="label">✨ Dashboard Stock Premium Live</div>
+          <h1>Data Ruangan D sampai H</h1>
+          <div class="dateRow">
+            <button class="monthBtn" onclick="changeMonth(-1)">‹ Bulan Sebelum</button>
+            <button class="monthBtn todayBtn" onclick="goToday()">Bulan Ini</button>
+            <p class="date" id="tanggal"></p>
+            <button class="monthBtn" onclick="changeMonth(1)">Bulan Next ›</button>
+          </div>
+          <p class="statusLive" id="statusLive">Menghubungkan ke Firebase...</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><small>Total Masuk</small><b id="totalMasuk">0</b></div>
+        <div class="stat"><small>Total Terjual</small><b id="totalTerjual">0</b></div>
+        <div class="stat"><small>Sisa Stock</small><b id="totalSisa">0</b></div>
+        <div class="stat"><small>Belum Bayar</small><b id="belumBayar">0</b></div>
+      </div>
+      <div class="tools">
+        <input class="search" id="search" placeholder="Cari nama pelanggan..." />
+        <select class="roomSelect" id="filterRoom">
+          <option value="ALL">Semua Ruangan</option>
+          <option value="D">Ruangan D</option>
+          <option value="E">Ruangan E</option>
+          <option value="F">Ruangan F</option>
+          <option value="G">Ruangan G</option>
+          <option value="H">Ruangan H</option>
+        </select>
+        <button class="addBtn" onclick="openAdd()">+ Tambah Pembeli</button>
+        <button class="addBtn reportBtn" onclick="openBuyerReport()">📊 Rekapan Bulan Ini</button>
+      </div>
+    </header>
+    <section class="grid" id="grid"></section>
+  </div>
 
+  <div class="modal" id="modal">
+    <div class="formBox">
+      <h3 id="modalTitle">Tambah Pembeli</h3>
+      <div class="field"><label>Nama</label><input id="formNama" placeholder="Masukkan nama" /></div>
+      <div class="field"><label>Ruangan</label><select id="formRoom"><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+      <div class="field"><label>Jumlah Dibeli</label><input id="formBeli" type="number" min="0" placeholder="1" /></div>
+      <div class="field"><label>Status Bayar</label><select id="formStatus"><option>Lunas</option><option>Belum Bayar</option></select></div>
+      <div class="formAction"><button class="cancelBtn" onclick="closeModal()">Batal</button><button class="saveBtn" onclick="saveData()">Simpan</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="stockModal">
+    <div class="formBox">
+      <h3 id="stockTitle">Edit Stock Masuk</h3>
+      <div class="field"><label>Ruangan</label><input id="stockRoom" disabled /></div>
+      <div class="field"><label>Stock Masuk</label><input id="stockValue" type="number" min="0" /></div>
+      <p class="note">Sisa stock otomatis dihitung: Stock Masuk - Total Jumlah Dibeli di ruangan tersebut.</p>
+      <div class="formAction"><button class="cancelBtn" onclick="closeStockModal()">Batal</button><button class="saveBtn" onclick="saveRoomStock()">Simpan Stock</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="buyerReportModal">
+    <div class="formBox" style="width:min(900px,100%)">
+      <div class="reportHeader">
+        <button class="closeX" onclick="closeBuyerReport()">×</button>
+        <h3>Rekapan Pembelian Bulan Ini</h3>
+        <p class="note">Rumus otomatis: total pembelian dihitung dari nama yang sama di bulan yang sedang dibuka. Bulan berikutnya punya rekapan sendiri.</p>
+      </div>
+      <div class="reportTableWrap">
+        <table style="min-width:620px">
+          <thead><tr><th>Nama Pembeli</th><th class="center">Total Bulan Ini</th><th class="center">Lunas</th><th class="center">Belum Bayar</th></tr></thead>
+          <tbody id="buyerReportBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // GANTI BAGIAN INI DENGAN FIREBASE CONFIG MILIK BOS
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIynJCkKlBN0oHyqrPXppnEWahYGNJsZY",
+      authDomain: "dedy-b7d09.firebaseapp.com",
+      projectId: "dedy-b7d09",
+      storageBucket: "dedy-b7d09.firebasestorage.app",
+      messagingSenderId: "908999792372",
+      appId: "1:908999792372:web:cc0b7007d03a9aff42f0a1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const rooms = ["D", "E", "F", "G", "H"];
+    const defaultMonthData = {
+      roomStock: { D: 24, E: 19, F: 14, G: 0, H: 0 },
+      data: {
+        D: [["RAJAB",2,"Lunas"],["ALBERT",1,"Belum Bayar"],["RESITA",1,"Lunas"],["ITA",1,"Lunas"],["NANDA",1,"Belum Bayar"],["ALDI",1,"Lunas"],["IRVAN",1,"Belum Bayar"],["ANDRE",2,"Lunas"],["DIAN",2,"Lunas"],["FITO",1,"Lunas"],["YUNI",1,"Belum Bayar"],["LINUS",2,"Lunas"],["HAFIZ",4,"Lunas"],["REZA",1,"Belum Bayar"],["DARWIN",2,"Lunas"],["HABIB",2,"Lunas"]],
+        E: [["BILLY",1,"Lunas"],["FERRYS",1,"Belum Bayar"],["FREDAKIN",1,"Lunas"],["ILHAM",1,"Belum Bayar"],["DIKI",2,"Lunas"],["SAKTI",2,"Lunas"],["RISKI",1,"Belum Bayar"],["PUTRI",1,"Lunas"],["WAHYU",1,"Lunas"],["NASRUL",1,"Lunas"],["TIO",1,"Lunas"],["DENNY MUR",1,"Lunas"],["TRISMAN",1,"Lunas"],["BILLY",2,"Belum Bayar"]],
+        F: [["RAHMAT",2,"Belum Bayar"],["JAHUT",1,"Lunas"],["GULTOM",1,"Lunas"],["FELIX",1,"Lunas"],["MAINX",3,"Lunas"],["ALGHIFARI",1,"Lunas"],["DAPAN",2,"Lunas"],["IWAN",1,"Belum Bayar"],["DIAN",1,"Lunas"]],
+        G: [],
+        H: []
+      }
+    };
+
+    const emptyMonthData = () => ({
+      roomStock: { D: 0, E: 0, F: 0, G: 0, H: 0 },
+      data: { D: [], E: [], F: [], G: [], H: [] }
+    });
+
+    let state = { monthOffset: 0, months: {} };
+    let editRoom = null;
+    let editIndex = null;
+    let editingStockRoom = null;
+    let unsubscribeLive = null;
+    let isRenderingFromFirebase = false;
+
+    function safeMonthData(data) {
+      const base = emptyMonthData();
+      if (!data) return base;
+      rooms.forEach(room => {
+        base.roomStock[room] = Number(data.roomStock?.[room] || 0);
+        base.data[room] = Array.isArray(data.data?.[room]) ? data.data[room] : [];
+      });
+      return base;
+    }
+
+    function selectedDate(offset = state.monthOffset || 0) {
+      const d = new Date();
+      d.setDate(1);
+      d.setMonth(d.getMonth() + Number(offset));
+      return d;
+    }
+
+    function monthKey(offset = state.monthOffset || 0) {
+      const d = selectedDate(offset);
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    }
+
+    function monthRef() {
+      return doc(db, "dashboard_ruangan", monthKey());
+    }
+
+    function currentMonth() {
+      const key = monthKey();
+      if (!state.months[key]) state.months[key] = emptyMonthData();
+      return state.months[key];
+    }
+
+    async function persist() {
+      if (isRenderingFromFirebase) return;
+      try {
+        await setDoc(monthRef(), currentMonth(), { merge: true });
+        setLiveStatus("✅ Data tersimpan live di Firebase");
+      } catch (error) {
+        console.error(error);
+        setLiveStatus("❌ Gagal menyimpan. Cek firebaseConfig dan Firestore Rules.");
+        alert("Gagal menyimpan ke Firebase. Cek firebaseConfig dan Firestore Rules.");
+      }
+    }
+
+    function setLiveStatus(text) {
+      document.getElementById("statusLive").textContent = text;
+    }
+
+    async function listenLiveData() {
+      if (unsubscribeLive) unsubscribeLive();
+      setLiveStatus("Menghubungkan ke Firebase...");
+
+      const ref = monthRef();
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        const initialData = monthKey() === monthKey(0) ? defaultMonthData : emptyMonthData();
+        state.months[monthKey()] = JSON.parse(JSON.stringify(initialData));
+        await setDoc(ref, state.months[monthKey()], { merge: true });
+      }
+
+      unsubscribeLive = onSnapshot(ref, (snapshot) => {
+        isRenderingFromFirebase = true;
+        if (snapshot.exists()) {
+          state.months[monthKey()] = safeMonthData(snapshot.data());
+          setLiveStatus("🟢 Live realtime aktif - semua orang melihat data yang sama");
+        } else {
+          state.months[monthKey()] = emptyMonthData();
+          setLiveStatus("🟡 Bulan ini belum ada data");
+        }
+        render();
+        isRenderingFromFirebase = false;
+      }, (error) => {
+        console.error(error);
+        setLiveStatus("❌ Firebase belum tersambung. Cek config dan rules.");
+      });
+    }
+
+    function renderDate() {
+      document.getElementById("tanggal").textContent = selectedDate().toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+    }
+
+    window.changeMonth = async function(step) {
+      state.monthOffset = Number(state.monthOffset || 0) + step;
+      renderDate();
+      await listenLiveData();
+    };
+
+    window.goToday = async function() {
+      state.monthOffset = 0;
+      renderDate();
+      await listenLiveData();
+    };
+
+    function statusClass(status) {
+      return status === "Lunas" ? "badge lunas" : "badge belum";
+    }
+
+    function roomSold(room) {
+      return currentMonth().data[room].reduce((sum, item) => sum + Number(item[1] || 0), 0);
+    }
+
+    function roomRemaining(room) {
+      return Math.max(0, Number(currentMonth().roomStock[room] || 0) - roomSold(room));
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function render() {
+      renderDate();
+      const keyword = document.getElementById("search").value.toLowerCase();
+      const selectedRoom = document.getElementById("filterRoom").value;
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      let totalMasuk = 0, totalTerjual = 0, totalSisa = 0, unpaid = 0;
+
+      rooms.filter(room => selectedRoom === "ALL" || room === selectedRoom).forEach(room => {
+        const month = currentMonth();
+        const rows = month.data[room]
+          .map((item, index) => ({ item, index }))
+          .filter(row => String(row.item[0]).toLowerCase().includes(keyword));
+
+        const masuk = Number(month.roomStock[room] || 0);
+        const terjual = roomSold(room);
+        const sisa = roomRemaining(room);
+        totalMasuk += masuk;
+        totalTerjual += terjual;
+        totalSisa += sisa;
+        unpaid += rows.filter(row => row.item[2] === "Belum Bayar").length;
+
+        const emptyRows = Array.from({ length: Math.max(4, 12 - rows.length) }, () => `<tr><td style="color:rgba(255,255,255,.25)">—</td><td></td><td></td><td></td></tr>`).join("");
+        const tableRows = rows.map(row => {
+          const [nama, beli, status] = row.item;
+          return `<tr>
+            <td>${escapeHtml(nama)}</td>
+            <td class="center">${Number(beli || 0)}</td>
+            <td class="center"><span class="${statusClass(status)}">${escapeHtml(status)}</span></td>
+            <td class="center"><div class="action">
+              <button class="edit" onclick="openEdit('${room}', ${row.index})">Edit</button>
+              <button class="delete" onclick="deleteData('${room}', ${row.index})">Hapus</button>
+            </div></td>
+          </tr>`;
+        }).join("");
+
+        grid.innerHTML += `<div class="card room-${room}">
+          <div class="room-head">
+            <div class="room-title"><small>Ruangan</small><h2>${room}</h2></div>
+            <div class="stockPanel">
+              <div class="total-box"><small>Stock Masuk</small><b>${masuk}</b></div>
+              <div class="total-box"><small>Terjual</small><b>${terjual}</b></div>
+              <div class="total-box"><small>Sisa Stock</small><b>${sisa}</b></div>
+              <button class="editStockBtn" onclick="openStockModal('${room}')">Edit Stock</button>
+            </div>
+          </div>
+          <div class="tableWrap"><table><thead><tr><th>Nama</th><th class="center">Jumlah Dibeli</th><th class="center">Status</th><th class="center">Aksi</th></tr></thead><tbody>${tableRows}${emptyRows}</tbody></table></div>
+        </div>`;
+      });
+
+      document.getElementById("totalMasuk").textContent = totalMasuk;
+      document.getElementById("totalTerjual").textContent = totalTerjual;
+      document.getElementById("totalSisa").textContent = totalSisa;
+      document.getElementById("belumBayar").textContent = unpaid;
+    }
+
+    window.openAdd = function() {
+      editRoom = null;
+      editIndex = null;
+      document.getElementById("modalTitle").textContent = "Tambah Pembeli";
+      document.getElementById("formNama").value = "";
+      document.getElementById("formRoom").value = "D";
+      document.getElementById("formBeli").value = 1;
+      document.getElementById("formStatus").value = "Lunas";
+      document.getElementById("modal").classList.add("show");
+    };
+
+    window.openEdit = function(room, index) {
+      editRoom = room;
+      editIndex = index;
+      const item = currentMonth().data[room][index];
+      document.getElementById("modalTitle").textContent = "Edit Pembeli";
+      document.getElementById("formNama").value = item[0];
+      document.getElementById("formRoom").value = room;
+      document.getElementById("formBeli").value = item[1];
+      document.getElementById("formStatus").value = item[2];
+      document.getElementById("modal").classList.add("show");
+    };
+
+    window.closeModal = function() {
+      document.getElementById("modal").classList.remove("show");
+    };
+
+    window.saveData = async function() {
+      const nama = document.getElementById("formNama").value.trim().toUpperCase();
+      const room = document.getElementById("formRoom").value;
+      const beli = Math.max(0, Number(document.getElementById("formBeli").value || 0));
+      const status = document.getElementById("formStatus").value;
+
+      if (!nama) {
+        alert("Nama wajib diisi");
+        return;
+      }
+
+      const newItem = [nama, beli, status];
+      if (editRoom !== null && editIndex !== null) {
+        currentMonth().data[editRoom].splice(editIndex, 1);
+        currentMonth().data[room].push(newItem);
+      } else {
+        currentMonth().data[room].push(newItem);
+      }
+
+      await persist();
+      closeModal();
+      render();
+    };
+
+    window.deleteData = async function(room, index) {
+      if (confirm("Yakin mau hapus data ini?")) {
+        currentMonth().data[room].splice(index, 1);
+        await persist();
+        render();
+      }
+    };
+
+    window.openStockModal = function(room) {
+      editingStockRoom = room;
+      document.getElementById("stockTitle").textContent = "Edit Stock Masuk Ruangan " + room;
+      document.getElementById("stockRoom").value = "Ruangan " + room;
+      document.getElementById("stockValue").value = currentMonth().roomStock[room] || 0;
+      document.getElementById("stockModal").classList.add("show");
+    };
+
+    window.closeStockModal = function() {
+      document.getElementById("stockModal").classList.remove("show");
+    };
+
+    window.saveRoomStock = async function() {
+      const value = Math.max(0, Number(document.getElementById("stockValue").value || 0));
+      currentMonth().roomStock[editingStockRoom] = value;
+      await persist();
+      closeStockModal();
+      render();
+    };
+
+    function buyerMonthSummary() {
+      const result = {};
+      rooms.forEach(room => {
+        currentMonth().data[room].forEach(item => {
+          const nama = item[0];
+          const beli = Number(item[1] || 0);
+          const status = item[2];
+          if (!result[nama]) result[nama] = { total: 0, lunas: 0, belum: 0 };
+          result[nama].total += beli;
+          if (status === "Lunas") result[nama].lunas += beli;
+          if (status === "Belum Bayar") result[nama].belum += beli;
+        });
+      });
+      return result;
+    }
+
+    window.openBuyerReport = function() {
+      const body = document.getElementById("buyerReportBody");
+      const summary = buyerMonthSummary();
+      const names = Object.keys(summary).sort();
+      if (!names.length) {
+        body.innerHTML = '<tr><td colspan="4" class="center">Belum ada data pembeli di bulan ini</td></tr>';
+      } else {
+        body.innerHTML = names.map(nama => {
+          const item = summary[nama];
+          return '<tr><td>' + escapeHtml(nama) + '</td><td class="center">' + item.total + '</td><td class="center">' + (item.lunas || '-') + '</td><td class="center">' + (item.belum || '-') + '</td></tr>';
+        }).join('');
+      }
+      document.getElementById("buyerReportModal").classList.add("show");
+    };
+
+    window.closeBuyerReport = function() {
+      document.getElementById("buyerReportModal").classList.remove("show");
+    };
+
+    document.getElementById("search").addEventListener("input", render);
+    document.getElementById("filterRoom").addEventListener("change", render);
+
+    window.addEventListener("load", () => {
+      listenLiveData();
+    });
+  </script>
+</body>
+</html>
