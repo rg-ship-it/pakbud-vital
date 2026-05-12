@@ -1,8 +1,4 @@
 
-
-
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -475,6 +471,45 @@
 
     .dailyInfo b {
       color: #facc15;
+    }
+
+
+    .shiftBlock {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.13);
+      background: rgba(15,23,42,.38);
+    }
+
+    .shiftBlock + .shiftBlock {
+      margin-top: 18px;
+    }
+
+    .shiftTitle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(250,204,21,.98), rgba(251,146,60,.98));
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 1000;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      box-shadow: 0 12px 30px rgba(250,204,21,.18);
+    }
+
+    .shiftTitle.malam {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 22%, rgba(0,0,0,.32) 52%, rgba(255,255,255,.10) 74%, rgba(0,0,0,.44) 100%),
+        linear-gradient(90deg, #140407 0%, #3b050b 22%, #8b0f18 48%, #210407 74%, #050506 100%);
+      color: #fff7f7;
+      border: 1px solid rgba(255, 80, 90, .55);
+      text-shadow: 0 1px 0 rgba(0,0,0,.75), 0 0 10px rgba(255,70,80,.42);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -10px 18px rgba(0,0,0,.38), 0 12px 30px rgba(160,10,18,.30), 0 0 22px rgba(255,30,45,.18);
     }
 
     table {
@@ -999,6 +1034,7 @@
       <div class="field"><label>Ruangan</label><select id="formRoom"><option>D</option><option>E</option><option>F</option><option>H</option><option>J</option></select></div>
       <div class="field"><label>Tanggal Pembelian</label><input id="formTanggal" type="date" /></div>
       <div class="field"><label>Jumlah Dibeli</label><input id="formBeli" type="number" min="0" placeholder="1" /></div>
+      <div class="field"><label>Shift</label><select id="formShift"><option value="Pagi">SHIFT PAGI</option><option value="Malam">SHIFT MALAM</option></select></div>
       <div class="field"><label>Status Bayar</label><select id="formStatus"><option>Lunas</option><option>Belum Bayar</option></select></div>
       <div class="formAction"><button class="cancelBtn" onclick="closeModal()">Batal</button><button class="saveBtn" onclick="saveData()">Simpan</button></div>
     </div>
@@ -1052,6 +1088,7 @@
             <tr>
               <th>Ruangan</th>
               <th>Nama Pembeli</th>
+              <th class="center">Shift</th>
               <th class="center">Jumlah</th>
               <th class="center">Status</th>
               <th class="center">Tanggal</th>
@@ -1122,7 +1159,8 @@
           nama: String(item[0] || "").toUpperCase(),
           beli: Number(item[1] || 0),
           status: item[2] || "Lunas",
-          tanggal: item[3] || todayKey()
+          tanggal: item[3] || todayKey(),
+          shift: item[4] || "Pagi"
         };
       }
 
@@ -1130,7 +1168,8 @@
         nama: String(item?.nama || "").toUpperCase(),
         beli: Number(item?.beli || 0),
         status: item?.status || "Lunas",
-        tanggal: item?.tanggal || todayKey()
+        tanggal: item?.tanggal || todayKey(),
+        shift: item?.shift || "Pagi"
       };
     }
 
@@ -1452,19 +1491,46 @@
           if (row.item.status === "Belum Bayar") harianBelum += Number(row.item.beli || 0);
         });
 
-        const tableRows = rows.map(row => {
-          const { nama, beli, status, tanggal } = row.item;
-          return `<tr>
-            <td>${escapeHtml(nama)}</td>
-            <td class="center">${Number(beli || 0)}</td>
-            <td class="center"><span class="${statusClass(status)}">${escapeHtml(status)}</span></td>
-            <td class="center">${escapeHtml(tanggal)}</td>
-            <td class="center"><div class="action">
-              <button class="edit" onclick="openEdit('${room}', ${row.index})">Edit</button>
-              <button class="delete" onclick="deleteData('${room}', ${row.index})">Hapus</button>
-            </div></td>
-          </tr>`;
-        }).join("");
+        function tableRowsByShift(shiftName) {
+          const shiftRows = rows.filter(row => (row.item.shift || "Pagi") === shiftName);
+          if (!shiftRows.length) {
+            return '<tr><td colspan="5" class="center">Belum ada data SHIFT ' + shiftName.toUpperCase() + ' untuk tanggal ini</td></tr>';
+          }
+
+          return shiftRows.map(row => {
+            const { nama, beli, status, tanggal } = row.item;
+            return `<tr>
+              <td>${escapeHtml(nama)}</td>
+              <td class="center">${Number(beli || 0)}</td>
+              <td class="center"><span class="${statusClass(status)}">${escapeHtml(status)}</span></td>
+              <td class="center">${escapeHtml(tanggal)}</td>
+              <td class="center"><div class="action">
+                <button class="edit" onclick="openEdit('${room}', ${row.index})">Edit</button>
+                <button class="delete" onclick="deleteData('${room}', ${row.index})">Hapus</button>
+              </div></td>
+            </tr>`;
+          }).join("");
+        }
+
+        function shiftTable(shiftName, icon, extraClass = "") {
+          return `<div class="shiftBlock">
+            <div class="shiftTitle ${extraClass}">${icon} SHIFT ${shiftName.toUpperCase()}</div>
+            <div class="tableWrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nama Harian</th>
+                    <th class="center">Jumlah Dibeli</th>
+                    <th class="center">Status</th>
+                    <th class="center">Tanggal</th>
+                    <th class="center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>${tableRowsByShift(shiftName)}</tbody>
+              </table>
+            </div>
+          </div>`;
+        }
 
         grid.innerHTML += `<div class="card room-${room}">
           <div class="room-head">
@@ -1477,22 +1543,11 @@
 
           <div class="dailyInfo">
             <span>📅 Data harian: <b>${escapeHtml(selectedDailyDate)}</b></span>
+            <span>☀️ SHIFT PAGI dan 🌙 SHIFT MALAM terpisah, total kartu tetap gabungan hari ini.</span>
           </div>
 
-          <div class="tableWrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nama Harian</th>
-                  <th class="center">Jumlah Dibeli</th>
-                  <th class="center">Status</th>
-                  <th class="center">Tanggal</th>
-                  <th class="center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>${tableRows}</tbody>
-            </table>
-          </div>
+          ${shiftTable("Pagi", "☀️")}
+          ${shiftTable("Malam", "🌙", "malam")}
         </div>`;
       });
 
@@ -1516,6 +1571,7 @@
       document.getElementById("formRoom").value = "D";
       document.getElementById("formTanggal").value = selectedDay || todayKey();
       document.getElementById("formBeli").value = 1;
+      document.getElementById("formShift").value = "Pagi";
       document.getElementById("formStatus").value = "Lunas";
       document.getElementById("modal").classList.add("show");
     };
@@ -1530,6 +1586,7 @@
       document.getElementById("formRoom").value = room;
       document.getElementById("formTanggal").value = item.tanggal || todayKey();
       document.getElementById("formBeli").value = item.beli;
+      document.getElementById("formShift").value = item.shift || "Pagi";
       document.getElementById("formStatus").value = item.status;
       document.getElementById("modal").classList.add("show");
     };
@@ -1543,6 +1600,7 @@
       const room = document.getElementById("formRoom").value;
       const tanggal = document.getElementById("formTanggal").value || todayKey();
       const beli = Math.max(0, Number(document.getElementById("formBeli").value || 0));
+      const shift = document.getElementById("formShift").value || "Pagi";
       const status = document.getElementById("formStatus").value;
 
       if (!nama) {
@@ -1550,7 +1608,7 @@
         return;
       }
 
-      const newItem = { nama, beli, status, tanggal };
+      const newItem = { nama, beli, status, tanggal, shift };
 
       if (editRoom !== null && editIndex !== null) {
         currentMonth().data[editRoom].splice(editIndex, 1);
@@ -1667,12 +1725,13 @@
       document.getElementById("recapPembeliHarian").textContent = items.length;
 
       if (!items.length) {
-        body.innerHTML = '<tr><td colspan="5" class="center">Belum ada data pembeli pada tanggal ini</td></tr>';
+        body.innerHTML = '<tr><td colspan="6" class="center">Belum ada data pembeli pada tanggal ini</td></tr>';
       } else {
         body.innerHTML = items.map(item => {
           return `<tr>
             <td>Ruangan ${escapeHtml(item.room)}</td>
             <td>${escapeHtml(item.nama)}</td>
+            <td class="center">SHIFT ${escapeHtml(item.shift || "Pagi").toUpperCase()}</td>
             <td class="center">${Number(item.beli || 0)}</td>
             <td class="center"><span class="${statusClass(item.status)}">${escapeHtml(item.status)}</span></td>
             <td class="center">${escapeHtml(item.tanggal)}</td>
