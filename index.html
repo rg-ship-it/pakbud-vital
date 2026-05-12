@@ -300,7 +300,7 @@
 
           if (snapshot.exists()) {
             state.months[key] = safeMonthData(snapshot.data());
-            setLiveStatus("🟢 Live realtime aktif - semua orang melihat data yang sama");
+            setLiveStatus("🟢 Live realtime aktif");
           } else {
             setLiveStatus("🟡 Bulan ini belum ada data, memakai tampilan awal");
           }
