@@ -1358,6 +1358,13 @@
       return currentMonth().data[room].reduce((sum, item) => sum + Number(normalizeItem(item).beli || 0), 0);
     }
 
+    function roomSoldDaily(room, date = todayKey()) {
+      return currentMonth().data[room]
+        .map(normalizeItem)
+        .filter(item => item.tanggal === date)
+        .reduce((sum, item) => sum + Number(item.beli || 0), 0);
+    }
+
     function stockInThisMonth(month = currentMonth()) {
       return Math.max(0, Number(month.stockIn ?? month.stockOverall ?? 0));
     }
@@ -1428,10 +1435,14 @@
           .filter(row => row.item.tanggal === selectedDailyDate);
 
         const masuk = stockKeseluruhan;
-        const terjual = roomSold(room);
-        const sisa = Math.max(0, stockKeseluruhan - totalSoldMonth(month));
+        const terjualBulananRoom = roomSold(room);
+        const terjual = roomSoldDaily(room, selectedDailyDate);
+        const belumBayarHariIniRoom = month.data[room]
+          .map(normalizeItem)
+          .filter(item => item.tanggal === selectedDailyDate && item.status === "Belum Bayar")
+          .reduce((sum, item) => sum + Number(item.beli || 0), 0);
 
-        totalTerjual += terjual;
+        totalTerjual += terjualBulananRoom;
         month.data[room].map(normalizeItem).forEach(item => {
           if (item.status === "Belum Bayar") unpaid += Number(item.beli || 0);
         });
@@ -1459,8 +1470,8 @@
           <div class="room-head">
             <div class="room-title"><small>Ruangan</small><h2>${room}</h2></div>
             <div class="stockPanel">
-              <div class="total-box"><small>Terjual</small><b>${terjual}</b></div>
-              <div class="total-box"><small>Sisa Stock</small><b>${sisa}</b></div>
+              <div class="total-box"><small>Terjual Hari Ini</small><b>${terjual}</b></div>
+              <div class="total-box"><small>Belum Bayar</small><b>${belumBayarHariIniRoom}</b></div>
             </div>
           </div>
 
