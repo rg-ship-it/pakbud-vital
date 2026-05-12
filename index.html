@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -281,7 +279,7 @@
 
     .tools {
       display: grid;
-      grid-template-columns: 1.4fr 180px 180px auto auto auto;
+      grid-template-columns: 1.4fr 180px 180px auto auto auto auto;
       gap: 12px;
       margin-top: 18px;
       align-items: center;
@@ -321,6 +319,11 @@
     .reportBtn {
       background: linear-gradient(90deg, #38bdf8, #6366f1);
       color: white;
+    }
+
+    .stockManageBtn {
+      background: linear-gradient(90deg, #facc15, #fb923c);
+      color: #111827;
     }
 
 
@@ -773,7 +776,7 @@
       </div>
 
       <div class="stats">
-        <div class="stat"><small>Total Masuk</small><b id="totalMasuk">0</b></div>
+        <div class="stat"><small>Total Stock Tersedia</small><b id="totalMasuk">0</b></div>
         <div class="stat"><small>Terjual Bulan</small><b id="totalTerjual">0</b></div>
         <div class="stat"><small>Sisa Stock</small><b id="totalSisa">0</b></div>
         <div class="stat"><small>Belum Bayar Bulan</small><b id="belumBayar">0</b></div>
@@ -793,6 +796,7 @@
         </select>
         <input class="dateInput" id="filterDate" type="date" />
         <button class="addBtn" onclick="openAdd()">+ Tambah Pembeli</button>
+        <button class="addBtn stockManageBtn" onclick="openStockModal()">Stock Keseluruhan Bulan Ini</button>
         <button class="addBtn dailyReportBtn" onclick="openDailyRecap()">📅 Rekapan Harian</button>
         <button class="addBtn reportBtn" onclick="openBuyerReport()">📊 Rekapan Bulan Ini</button>
       </div>
@@ -815,10 +819,10 @@
 
   <div class="modal" id="stockModal">
     <div class="formBox">
-      <h3 id="stockTitle">Edit Stock Masuk</h3>
-      <div class="field"><label>Ruangan</label><input id="stockRoom" disabled /></div>
-      <div class="field"><label>Stock Masuk</label><input id="stockValue" type="number" min="0" /></div>
-      <p class="note">Sisa stock otomatis dihitung: Stock Masuk - Total Jumlah Dibeli di ruangan tersebut.</p>
+      <h3 id="stockTitle">Stock Keseluruhan Bulan Ini</h3>
+      <p class="note">Masukkan stock barang masuk bulan ini saja. Sistem otomatis menambahkan sisa stock bulan sebelumnya.</p>
+      <div class="field"><label>Stock Barang Masuk Bulan Ini</label><input id="stockValueOverall" type="number" min="0" /></div>
+      <p class="note" id="autoStockNote">Total stock tersedia otomatis dihitung: Sisa bulan sebelumnya + Stock masuk bulan ini.</p>
       <div class="formAction"><button class="cancelBtn" onclick="closeStockModal()">Batal</button><button class="saveBtn" onclick="saveRoomStock()">Simpan Stock</button></div>
     </div>
   </div>
@@ -898,6 +902,8 @@
     const makeItem = (nama, beli, status, tanggal = todayKey()) => ({ nama, beli, status, tanggal });
 
     const defaultMonthData = {
+      stockOverall: 57,
+      stockIn: 57,
       roomStock: { D: 24, E: 19, F: 14, G: 0, H: 0 },
       data: {
         D: [makeItem("RAJAB",2,"Lunas"),makeItem("ALBERT",1,"Belum Bayar"),makeItem("RESITA",1,"Lunas"),makeItem("ITA",1,"Lunas"),makeItem("NANDA",1,"Belum Bayar"),makeItem("ALDI",1,"Lunas"),makeItem("IRVAN",1,"Belum Bayar"),makeItem("ANDRE",2,"Lunas"),makeItem("DIAN",2,"Lunas"),makeItem("FITO",1,"Lunas"),makeItem("YUNI",1,"Belum Bayar"),makeItem("LINUS",2,"Lunas"),makeItem("HAFIZ",4,"Lunas"),makeItem("REZA",1,"Belum Bayar"),makeItem("DARWIN",2,"Lunas"),makeItem("HABIB",2,"Lunas")],
@@ -909,6 +915,8 @@
     };
 
     const emptyMonthData = () => ({
+      stockOverall: 0,
+      stockIn: 0,
       roomStock: { D: 0, E: 0, F: 0, G: 0, H: 0 },
       data: { D: [], E: [], F: [], G: [], H: [] }
     });
@@ -943,6 +951,10 @@
       const base = emptyMonthData();
       if (!data) return base;
 
+      const legacyStock = Number(data.stockOverall ?? Object.values(data.roomStock || {}).reduce((sum, value) => sum + Number(value || 0), 0));
+      base.stockIn = Math.max(0, Number(data.stockIn ?? legacyStock));
+      base.stockOverall = base.stockIn;
+
       rooms.forEach(room => {
         base.roomStock[room] = Number(data.roomStock?.[room] || 0);
         base.data[room] = Array.isArray(data.data?.[room])
@@ -963,6 +975,28 @@
     function monthKey(offset = state.monthOffset || 0) {
       const d = selectedDate(offset);
       return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    }
+
+    function previousMonthKey(key = monthKey()) {
+      const [year, month] = String(key).split("-").map(Number);
+      const d = new Date(year, month - 2, 1);
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    }
+
+    function monthRefByKey(key) {
+      return doc(db, "dashboard_ruangan", key);
+    }
+
+    async function ensurePreviousMonthLoaded(key = monthKey()) {
+      const prevKey = previousMonthKey(key);
+      if (state.months[prevKey]) return;
+      try {
+        const snap = await getDoc(monthRefByKey(prevKey));
+        state.months[prevKey] = snap.exists() ? safeMonthData(snap.data()) : emptyMonthData();
+      } catch (error) {
+        console.warn("Gagal ambil data bulan sebelumnya", error);
+        state.months[prevKey] = emptyMonthData();
+      }
     }
 
     function daysInSelectedMonth() {
@@ -1004,7 +1038,7 @@
     }
 
     function monthRef() {
-      return doc(db, "dashboard_ruangan", monthKey());
+      return monthRefByKey(monthKey());
     }
 
     function currentMonth() {
@@ -1038,6 +1072,7 @@
 
       const key = monthKey();
       const ref = monthRef();
+      await ensurePreviousMonthLoaded(key);
 
       if (!state.months[key]) {
         state.months[key] = key === monthKey(0)
@@ -1117,6 +1152,24 @@
       return currentMonth().data[room].reduce((sum, item) => sum + Number(normalizeItem(item).beli || 0), 0);
     }
 
+    function stockInThisMonth(month = currentMonth()) {
+      return Math.max(0, Number(month.stockIn ?? month.stockOverall ?? 0));
+    }
+
+    function previousMonthRemaining(key = monthKey()) {
+      const prev = state.months[previousMonthKey(key)];
+      if (!prev) return 0;
+      return Math.max(0, overallStock(prev, previousMonthKey(key)) - totalSoldMonth(prev));
+    }
+
+    function overallStock(month = currentMonth(), key = monthKey()) {
+      return Math.max(0, previousMonthRemaining(key) + stockInThisMonth(month));
+    }
+
+    function totalSoldMonth(month = currentMonth()) {
+      return rooms.reduce((sum, room) => sum + month.data[room].reduce((roomSum, item) => roomSum + Number(normalizeItem(item).beli || 0), 0), 0);
+    }
+
     function roomRemaining(room) {
       return Math.max(0, Number(currentMonth().roomStock[room] || 0) - roomSold(room));
     }
@@ -1157,20 +1210,22 @@
       let harianTerjual = 0;
       let harianBelum = 0;
 
+      const month = currentMonth();
+      const stockMasukBulanIni = stockInThisMonth(month);
+      const sisaBulanLalu = previousMonthRemaining(monthKey());
+      const stockKeseluruhan = overallStock(month, monthKey());
+
       rooms.filter(room => selectedRoom === "ALL" || room === selectedRoom).forEach(room => {
-        const month = currentMonth();
         const rows = month.data[room]
           .map((item, index) => ({ item: normalizeItem(item), index }))
           .filter(row => row.item.nama.toLowerCase().includes(keyword))
           .filter(row => row.item.tanggal === selectedDailyDate);
 
-        const masuk = Number(month.roomStock[room] || 0);
+        const masuk = stockKeseluruhan;
         const terjual = roomSold(room);
-        const sisa = roomRemaining(room);
+        const sisa = Math.max(0, stockKeseluruhan - totalSoldMonth(month));
 
-        totalMasuk += masuk;
         totalTerjual += terjual;
-        totalSisa += sisa;
         month.data[room].map(normalizeItem).forEach(item => {
           if (item.status === "Belum Bayar") unpaid += Number(item.beli || 0);
         });
@@ -1208,10 +1263,8 @@
           <div class="room-head">
             <div class="room-title"><small>Ruangan</small><h2>${room}</h2></div>
             <div class="stockPanel">
-              <div class="total-box"><small>Stock Masuk</small><b>${masuk}</b></div>
               <div class="total-box"><small>Terjual</small><b>${terjual}</b></div>
               <div class="total-box"><small>Sisa Stock</small><b>${sisa}</b></div>
-              <button class="editStockBtn" onclick="openStockModal('${room}')">Edit Stock</button>
             </div>
           </div>
 
@@ -1235,6 +1288,10 @@
           </div>
         </div>`;
       });
+
+      totalMasuk = stockKeseluruhan;
+      totalTerjual = totalSoldMonth(month);
+      totalSisa = Math.max(0, stockKeseluruhan - totalTerjual);
 
       document.getElementById("totalMasuk").textContent = totalMasuk;
       document.getElementById("totalTerjual").textContent = totalTerjual;
@@ -1308,11 +1365,12 @@
       }
     };
 
-    window.openStockModal = function(room) {
-      editingStockRoom = room;
-      document.getElementById("stockTitle").textContent = "Edit Stock Masuk Ruangan " + room;
-      document.getElementById("stockRoom").value = "Ruangan " + room;
-      document.getElementById("stockValue").value = currentMonth().roomStock[room] || 0;
+    window.openStockModal = function() {
+      const month = currentMonth();
+      const input = document.getElementById("stockValueOverall");
+      if (input) input.value = stockInThisMonth(month);
+      const note = document.getElementById("autoStockNote");
+      if (note) note.textContent = `Sisa bulan sebelumnya: ${previousMonthRemaining(monthKey())}. Total stock tersedia otomatis: ${previousMonthRemaining(monthKey())} + ${stockInThisMonth(month)} = ${overallStock(month, monthKey())}.`;
       document.getElementById("stockModal").classList.add("show");
     };
 
@@ -1321,8 +1379,10 @@
     };
 
     window.saveRoomStock = async function() {
-      const value = Math.max(0, Number(document.getElementById("stockValue").value || 0));
-      currentMonth().roomStock[editingStockRoom] = value;
+      const month = currentMonth();
+      const input = document.getElementById("stockValueOverall");
+      month.stockIn = Math.max(0, Number(input?.value || 0));
+      month.stockOverall = month.stockIn;
       await persist();
       closeStockModal();
       render();
