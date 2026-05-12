@@ -1,9 +1,11 @@
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Ruangan Premium Live Firebase</title>
+  <title>Dashboard Ruangan H J Live Firebase</title>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
@@ -362,8 +364,8 @@
     .room-D { background: linear-gradient(135deg, #4c0519, #172554, #083344); }
     .room-E { background: linear-gradient(135deg, #451a03, #4c0519, #2e1065); }
     .room-F { background: linear-gradient(135deg, #064e3b, #020617, #1e3a8a); }
-    .room-G { background: linear-gradient(135deg, #312e81, #581c87, #831843); }
-    .room-H { background: linear-gradient(135deg, #1c1917, #7f1d1d, #9a3412); }
+    .room-H { background: linear-gradient(135deg, #312e81, #581c87, #831843); }
+    .room-J { background: linear-gradient(135deg, #1c1917, #7f1d1d, #9a3412); }
 
     .room-head {
       position: relative;
@@ -503,12 +505,12 @@
       color: white;
     }
 
-    .room-G th {
+    .room-H th {
       background: linear-gradient(90deg, #a855f7, #7e22ce);
       color: white;
     }
 
-    .room-H th {
+    .room-J th {
       background: linear-gradient(90deg, #ef4444, #b91c1c);
       color: white;
     }
@@ -525,11 +527,11 @@
       background: rgba(34,197,94,.18);
     }
 
-    .room-G tbody tr:nth-child(even) td {
+    .room-H tbody tr:nth-child(even) td {
       background: rgba(168,85,247,.18);
     }
 
-    .room-H tbody tr:nth-child(even) td {
+    .room-J tbody tr:nth-child(even) td {
       background: rgba(239,68,68,.18);
     }
 
@@ -739,6 +741,51 @@
       .stats { grid-template-columns: 1fr; }
       h1 { font-size: 34px; }
     }
+  
+
+    /* Warna berbeda untuk setiap kolom statistik utama */
+    .stats > .stat:nth-child(1) {
+      background: linear-gradient(135deg, rgba(14,165,233,.30), rgba(2,6,23,.78)) !important;
+      border-color: rgba(56,189,248,.55) !important;
+      box-shadow: 0 0 22px rgba(14,165,233,.16), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .stats > .stat:nth-child(2) {
+      background: linear-gradient(135deg, rgba(34,197,94,.30), rgba(2,6,23,.78)) !important;
+      border-color: rgba(74,222,128,.55) !important;
+      box-shadow: 0 0 22px rgba(34,197,94,.16), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .stats > .stat:nth-child(3) {
+      background: linear-gradient(135deg, rgba(168,85,247,.30), rgba(2,6,23,.78)) !important;
+      border-color: rgba(192,132,252,.55) !important;
+      box-shadow: 0 0 22px rgba(168,85,247,.16), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .stats > .stat:nth-child(4) {
+      background: linear-gradient(135deg, rgba(245,158,11,.32), rgba(2,6,23,.78)) !important;
+      border-color: rgba(251,191,36,.58) !important;
+      box-shadow: 0 0 22px rgba(245,158,11,.16), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .stats > .stat:nth-child(5) {
+      background: linear-gradient(135deg, rgba(236,72,153,.30), rgba(2,6,23,.78)) !important;
+      border-color: rgba(244,114,182,.55) !important;
+      box-shadow: 0 0 22px rgba(236,72,153,.16), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .stats > .stat:nth-child(6) {
+      background: linear-gradient(135deg, rgba(239,68,68,.30), rgba(2,6,23,.78)) !important;
+      border-color: rgba(248,113,113,.55) !important;
+      box-shadow: 0 0 22px rgba(239,68,68,.16), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .stats > .stat small,
+    .stats > .stat b {
+      color: #ffffff;
+      text-shadow: 0 2px 12px rgba(0,0,0,.45);
+    }
+
   </style>
 </head>
 
@@ -785,8 +832,8 @@
           <option value="D">Ruangan D</option>
           <option value="E">Ruangan E</option>
           <option value="F">Ruangan F</option>
-          <option value="G">Ruangan G</option>
           <option value="H">Ruangan H</option>
+          <option value="J">Ruangan J</option>
         </select>
         <input class="dateInput" id="filterDate" type="date" />
         <button class="addBtn" onclick="openAdd()">+ Tambah Pembeli</button>
@@ -803,7 +850,7 @@
     <div class="formBox">
       <h3 id="modalTitle">Tambah Pembeli</h3>
       <div class="field"><label>Nama</label><input id="formNama" placeholder="Masukkan nama" /></div>
-      <div class="field"><label>Ruangan</label><select id="formRoom"><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+      <div class="field"><label>Ruangan</label><select id="formRoom"><option>D</option><option>E</option><option>F</option><option>H</option><option>J</option></select></div>
       <div class="field"><label>Tanggal Pembelian</label><input id="formTanggal" type="date" /></div>
       <div class="field"><label>Jumlah Dibeli</label><input id="formBeli" type="number" min="0" placeholder="1" /></div>
       <div class="field"><label>Status Bayar</label><select id="formStatus"><option>Lunas</option><option>Belum Bayar</option></select></div>
@@ -887,7 +934,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const rooms = ["D", "E", "F", "G", "H"];
+    const rooms = ["D", "E", "F", "H", "J"];
 
     function todayKey() {
       return new Date().toISOString().slice(0, 10);
@@ -898,21 +945,21 @@
     const defaultMonthData = {
       stockOverall: 57,
       stockIn: 57,
-      roomStock: { D: 24, E: 19, F: 14, G: 0, H: 0 },
+      roomStock: { D: 24, E: 19, F: 14, H: 0, J: 0 },
       data: {
         D: [makeItem("RAJAB",2,"Lunas"),makeItem("ALBERT",1,"Belum Bayar"),makeItem("RESITA",1,"Lunas"),makeItem("ITA",1,"Lunas"),makeItem("NANDA",1,"Belum Bayar"),makeItem("ALDI",1,"Lunas"),makeItem("IRVAN",1,"Belum Bayar"),makeItem("ANDRE",2,"Lunas"),makeItem("DIAN",2,"Lunas"),makeItem("FITO",1,"Lunas"),makeItem("YUNI",1,"Belum Bayar"),makeItem("LINUS",2,"Lunas"),makeItem("HAFIZ",4,"Lunas"),makeItem("REZA",1,"Belum Bayar"),makeItem("DARWIN",2,"Lunas"),makeItem("HABIB",2,"Lunas")],
         E: [makeItem("BILLY",1,"Lunas"),makeItem("FERRYS",1,"Belum Bayar"),makeItem("FREDAKIN",1,"Lunas"),makeItem("ILHAM",1,"Belum Bayar"),makeItem("DIKI",2,"Lunas"),makeItem("SAKTI",2,"Lunas"),makeItem("RISKI",1,"Belum Bayar"),makeItem("PUTRI",1,"Lunas"),makeItem("WAHYU",1,"Lunas"),makeItem("NASRUL",1,"Lunas"),makeItem("TIO",1,"Lunas"),makeItem("DENNY MUR",1,"Lunas"),makeItem("TRISMAN",1,"Lunas"),makeItem("BILLY",2,"Belum Bayar")],
         F: [makeItem("RAHMAT",2,"Belum Bayar"),makeItem("JAHUT",1,"Lunas"),makeItem("GULTOM",1,"Lunas"),makeItem("FELIX",1,"Lunas"),makeItem("MAINX",3,"Lunas"),makeItem("ALGHIFARI",1,"Lunas"),makeItem("DAPAN",2,"Lunas"),makeItem("IWAN",1,"Belum Bayar"),makeItem("DIAN",1,"Lunas")],
-        G: [],
-        H: []
+        H: [],
+        J: []
       }
     };
 
     const emptyMonthData = () => ({
       stockOverall: 0,
       stockIn: 0,
-      roomStock: { D: 0, E: 0, F: 0, G: 0, H: 0 },
-      data: { D: [], E: [], F: [], G: [], H: [] }
+      roomStock: { D: 0, E: 0, F: 0, H: 0, J: 0 },
+      data: { D: [], E: [], F: [], H: [], J: [] }
     });
 
     let state = { monthOffset: 0, months: {} };
@@ -949,10 +996,29 @@
       base.stockIn = Math.max(0, Number(data.stockIn ?? legacyStock));
       base.stockOverall = base.stockIn;
 
+      // MIGRASI NAMA RUANGAN:
+      // Data lama: G -> tampil/simpan sebagai H, H -> tampil/simpan sebagai J.
+      const migratedRoomStock = { ...(data.roomStock || {}) };
+      const migratedData = { ...(data.data || {}) };
+
+      if (migratedRoomStock.G !== undefined && migratedRoomStock.H === undefined) {
+        migratedRoomStock.H = migratedRoomStock.G;
+      }
+      if ((data.roomStock || {}).H !== undefined && migratedRoomStock.J === undefined) {
+        migratedRoomStock.J = (data.roomStock || {}).H;
+      }
+
+      if (Array.isArray((data.data || {}).G) && !Array.isArray(migratedData.H)) {
+        migratedData.H = (data.data || {}).G;
+      }
+      if (Array.isArray((data.data || {}).H) && !Array.isArray(migratedData.J)) {
+        migratedData.J = (data.data || {}).H;
+      }
+
       rooms.forEach(room => {
-        base.roomStock[room] = Number(data.roomStock?.[room] || 0);
-        base.data[room] = Array.isArray(data.data?.[room])
-          ? data.data[room].map(normalizeItem).filter(item => item.nama)
+        base.roomStock[room] = Number(migratedRoomStock?.[room] || 0);
+        base.data[room] = Array.isArray(migratedData?.[room])
+          ? migratedData[room].map(normalizeItem).filter(item => item.nama)
           : [];
       });
 
