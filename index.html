@@ -178,12 +178,14 @@
     const db = getFirestore(app);
 
     const rooms = ["D", "E", "F", "G", "H"];
+    const makeItem = (nama, beli, status) => ({ nama, beli, status });
+
     const defaultMonthData = {
       roomStock: { D: 24, E: 19, F: 14, G: 0, H: 0 },
       data: {
-        D: [["RAJAB",2,"Lunas"],["ALBERT",1,"Belum Bayar"],["RESITA",1,"Lunas"],["ITA",1,"Lunas"],["NANDA",1,"Belum Bayar"],["ALDI",1,"Lunas"],["IRVAN",1,"Belum Bayar"],["ANDRE",2,"Lunas"],["DIAN",2,"Lunas"],["FITO",1,"Lunas"],["YUNI",1,"Belum Bayar"],["LINUS",2,"Lunas"],["HAFIZ",4,"Lunas"],["REZA",1,"Belum Bayar"],["DARWIN",2,"Lunas"],["HABIB",2,"Lunas"]],
-        E: [["BILLY",1,"Lunas"],["FERRYS",1,"Belum Bayar"],["FREDAKIN",1,"Lunas"],["ILHAM",1,"Belum Bayar"],["DIKI",2,"Lunas"],["SAKTI",2,"Lunas"],["RISKI",1,"Belum Bayar"],["PUTRI",1,"Lunas"],["WAHYU",1,"Lunas"],["NASRUL",1,"Lunas"],["TIO",1,"Lunas"],["DENNY MUR",1,"Lunas"],["TRISMAN",1,"Lunas"],["BILLY",2,"Belum Bayar"]],
-        F: [["RAHMAT",2,"Belum Bayar"],["JAHUT",1,"Lunas"],["GULTOM",1,"Lunas"],["FELIX",1,"Lunas"],["MAINX",3,"Lunas"],["ALGHIFARI",1,"Lunas"],["DAPAN",2,"Lunas"],["IWAN",1,"Belum Bayar"],["DIAN",1,"Lunas"]],
+        D: [makeItem("RAJAB",2,"Lunas"),makeItem("ALBERT",1,"Belum Bayar"),makeItem("RESITA",1,"Lunas"),makeItem("ITA",1,"Lunas"),makeItem("NANDA",1,"Belum Bayar"),makeItem("ALDI",1,"Lunas"),makeItem("IRVAN",1,"Belum Bayar"),makeItem("ANDRE",2,"Lunas"),makeItem("DIAN",2,"Lunas"),makeItem("FITO",1,"Lunas"),makeItem("YUNI",1,"Belum Bayar"),makeItem("LINUS",2,"Lunas"),makeItem("HAFIZ",4,"Lunas"),makeItem("REZA",1,"Belum Bayar"),makeItem("DARWIN",2,"Lunas"),makeItem("HABIB",2,"Lunas")],
+        E: [makeItem("BILLY",1,"Lunas"),makeItem("FERRYS",1,"Belum Bayar"),makeItem("FREDAKIN",1,"Lunas"),makeItem("ILHAM",1,"Belum Bayar"),makeItem("DIKI",2,"Lunas"),makeItem("SAKTI",2,"Lunas"),makeItem("RISKI",1,"Belum Bayar"),makeItem("PUTRI",1,"Lunas"),makeItem("WAHYU",1,"Lunas"),makeItem("NASRUL",1,"Lunas"),makeItem("TIO",1,"Lunas"),makeItem("DENNY MUR",1,"Lunas"),makeItem("TRISMAN",1,"Lunas"),makeItem("BILLY",2,"Belum Bayar")],
+        F: [makeItem("RAHMAT",2,"Belum Bayar"),makeItem("JAHUT",1,"Lunas"),makeItem("GULTOM",1,"Lunas"),makeItem("FELIX",1,"Lunas"),makeItem("MAINX",3,"Lunas"),makeItem("ALGHIFARI",1,"Lunas"),makeItem("DAPAN",2,"Lunas"),makeItem("IWAN",1,"Belum Bayar"),makeItem("DIAN",1,"Lunas")],
         G: [],
         H: []
       }
@@ -201,12 +203,33 @@
     let unsubscribeLive = null;
     let isRenderingFromFirebase = false;
 
+    function normalizeItem(item) {
+      // Firestore tidak mendukung array di dalam array.
+      // Jadi semua data pembeli disimpan sebagai object: { nama, beli, status }.
+      // Bagian ini juga tetap membaca data lama jika masih berbentuk array.
+      if (Array.isArray(item)) {
+        return {
+          nama: String(item[0] || "").toUpperCase(),
+          beli: Number(item[1] || 0),
+          status: item[2] || "Lunas"
+        };
+      }
+
+      return {
+        nama: String(item?.nama || "").toUpperCase(),
+        beli: Number(item?.beli || 0),
+        status: item?.status || "Lunas"
+      };
+    }
+
     function safeMonthData(data) {
       const base = emptyMonthData();
       if (!data) return base;
       rooms.forEach(room => {
         base.roomStock[room] = Number(data.roomStock?.[room] || 0);
-        base.data[room] = Array.isArray(data.data?.[room]) ? data.data[room] : [];
+        base.data[room] = Array.isArray(data.data?.[room])
+          ? data.data[room].map(normalizeItem).filter(item => item.nama)
+          : [];
       });
       return base;
     }
@@ -317,7 +340,7 @@
     }
 
     function roomSold(room) {
-      return currentMonth().data[room].reduce((sum, item) => sum + Number(item[1] || 0), 0);
+      return currentMonth().data[room].reduce((sum, item) => sum + Number(normalizeItem(item).beli || 0), 0);
     }
 
     function roomRemaining(room) {
@@ -345,7 +368,7 @@
         const month = currentMonth();
         const rows = month.data[room]
           .map((item, index) => ({ item, index }))
-          .filter(row => String(row.item[0]).toLowerCase().includes(keyword));
+          .filter(row => normalizeItem(row.item).nama.toLowerCase().includes(keyword));
 
         const masuk = Number(month.roomStock[room] || 0);
         const terjual = roomSold(room);
@@ -353,11 +376,11 @@
         totalMasuk += masuk;
         totalTerjual += terjual;
         totalSisa += sisa;
-        unpaid += rows.filter(row => row.item[2] === "Belum Bayar").length;
+        unpaid += rows.filter(row => normalizeItem(row.item).status === "Belum Bayar").length;
 
         const emptyRows = Array.from({ length: Math.max(4, 12 - rows.length) }, () => `<tr><td style="color:rgba(255,255,255,.25)">—</td><td></td><td></td><td></td></tr>`).join("");
         const tableRows = rows.map(row => {
-          const [nama, beli, status] = row.item;
+          const { nama, beli, status } = normalizeItem(row.item);
           return `<tr>
             <td>${escapeHtml(nama)}</td>
             <td class="center">${Number(beli || 0)}</td>
@@ -403,12 +426,12 @@
     window.openEdit = function(room, index) {
       editRoom = room;
       editIndex = index;
-      const item = currentMonth().data[room][index];
+      const item = normalizeItem(currentMonth().data[room][index]);
       document.getElementById("modalTitle").textContent = "Edit Pembeli";
-      document.getElementById("formNama").value = item[0];
+      document.getElementById("formNama").value = item.nama;
       document.getElementById("formRoom").value = room;
-      document.getElementById("formBeli").value = item[1];
-      document.getElementById("formStatus").value = item[2];
+      document.getElementById("formBeli").value = item.beli;
+      document.getElementById("formStatus").value = item.status;
       document.getElementById("modal").classList.add("show");
     };
 
@@ -427,7 +450,7 @@
         return;
       }
 
-      const newItem = [nama, beli, status];
+      const newItem = { nama, beli, status };
       if (editRoom !== null && editIndex !== null) {
         currentMonth().data[editRoom].splice(editIndex, 1);
         currentMonth().data[room].push(newItem);
@@ -472,9 +495,10 @@
       const result = {};
       rooms.forEach(room => {
         currentMonth().data[room].forEach(item => {
-          const nama = item[0];
-          const beli = Number(item[1] || 0);
-          const status = item[2];
+          const fixedItem = normalizeItem(item);
+          const nama = fixedItem.nama;
+          const beli = Number(fixedItem.beli || 0);
+          const status = fixedItem.status;
           if (!result[nama]) result[nama] = { total: 0, lunas: 0, belum: 0 };
           result[nama].total += beli;
           if (status === "Lunas") result[nama].lunas += beli;
