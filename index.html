@@ -253,30 +253,47 @@
       if (unsubscribeLive) unsubscribeLive();
       setLiveStatus("Menghubungkan ke Firebase...");
 
+      const key = monthKey();
       const ref = monthRef();
-      const snap = await getDoc(ref);
 
-      if (!snap.exists()) {
-        const initialData = monthKey() === monthKey(0) ? defaultMonthData : emptyMonthData();
-        state.months[monthKey()] = JSON.parse(JSON.stringify(initialData));
-        await setDoc(ref, state.months[monthKey()], { merge: true });
+      // Tampilkan kartu ruangan dulu saat halaman pertama dibuka.
+      // Jadi user tidak perlu klik filter/semua ruangan untuk memunculkan dashboard.
+      if (!state.months[key]) {
+        state.months[key] = key === monthKey(0)
+          ? JSON.parse(JSON.stringify(defaultMonthData))
+          : emptyMonthData();
+        render();
       }
 
-      unsubscribeLive = onSnapshot(ref, (snapshot) => {
-        isRenderingFromFirebase = true;
-        if (snapshot.exists()) {
-          state.months[monthKey()] = safeMonthData(snapshot.data());
-          setLiveStatus("🟢 Live realtime aktif - semua orang melihat data yang sama");
-        } else {
-          state.months[monthKey()] = emptyMonthData();
-          setLiveStatus("🟡 Bulan ini belum ada data");
+      try {
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+          await setDoc(ref, state.months[key], { merge: true });
         }
-        render();
-        isRenderingFromFirebase = false;
-      }, (error) => {
+
+        unsubscribeLive = onSnapshot(ref, (snapshot) => {
+          isRenderingFromFirebase = true;
+
+          if (snapshot.exists()) {
+            state.months[key] = safeMonthData(snapshot.data());
+            setLiveStatus("🟢 Live realtime aktif - semua orang melihat data yang sama");
+          } else {
+            setLiveStatus("🟡 Bulan ini belum ada data, memakai tampilan awal");
+          }
+
+          render();
+          isRenderingFromFirebase = false;
+        }, (error) => {
+          console.error(error);
+          setLiveStatus("❌ Firebase belum tersambung. Cek config, rules, dan koneksi internet.");
+          render();
+        });
+      } catch (error) {
         console.error(error);
-        setLiveStatus("❌ Firebase belum tersambung. Cek config dan rules.");
-      });
+        setLiveStatus("❌ Firebase belum tersambung. Cek config, rules, dan koneksi internet.");
+        render();
+      }
     }
 
     function renderDate() {
@@ -490,6 +507,9 @@
     document.getElementById("filterRoom").addEventListener("change", render);
 
     window.addEventListener("load", () => {
+      renderDate();
+      currentMonth();
+      render();
       listenLiveData();
     });
   </script>
