@@ -2197,7 +2197,11 @@
     window.openBuyerReport = function() {
       const body = document.getElementById("buyerReportBody");
       const summary = buyerMonthSummary();
-      const names = Object.keys(summary).sort();
+      const names = Object.keys(summary).sort((a, b) => {
+        const totalDiff = Number(summary[b].total || 0) - Number(summary[a].total || 0);
+        if (totalDiff !== 0) return totalDiff;
+        return a.localeCompare(b, "id", { sensitivity: "base" });
+      });
 
       if (!names.length) {
         body.innerHTML = '<tr><td colspan="2" class="center">Belum ada data pembeli di bulan ini</td></tr>';
