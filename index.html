@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -779,6 +783,72 @@
       background: linear-gradient(135deg, rgba(241,245,249,.34), rgba(100,116,139,.52)) !important;
     }
 
+
+    /* KOLOM KECIL SHIFT DI SAMPING NAMA - DATA KHUSUS BELUM BAYAR */
+    .unpaidNameCell {
+      display: grid;
+      grid-template-columns: minmax(150px, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      min-width: 235px;
+    }
+
+    .unpaidNameText {
+      font-weight: 950;
+      color: #ffffff;
+      text-shadow: 0 2px 12px rgba(0,0,0,.45);
+      word-break: break-word;
+    }
+
+    .unpaidShiftMiniCol {
+      min-width: 74px;
+      display: grid;
+      gap: 5px;
+      justify-items: stretch;
+    }
+
+    .unpaidShiftBadge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 4px 7px;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,.22);
+      font-size: 10px;
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: .25px;
+      white-space: nowrap;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 7px 14px rgba(0,0,0,.24);
+    }
+
+    .unpaidShiftBadge.pagi {
+      color: #082f49;
+      background: linear-gradient(135deg, #fef3c7, #fbbf24 52%, #f59e0b);
+    }
+
+    .unpaidShiftBadge.malam {
+      color: #ffffff;
+      background: linear-gradient(135deg, #312e81, #1e1b4b 54%, #020617);
+    }
+
+    .unpaidShiftBadge.empty {
+      opacity: .34;
+      filter: grayscale(1);
+    }
+
+    @media (max-width: 640px) {
+      .unpaidNameCell {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+      .unpaidShiftMiniCol {
+        grid-template-columns: repeat(2, max-content);
+        min-width: 0;
+      }
+    }
+
     .field { margin-bottom: 12px; }
 
     .field label {
@@ -1112,10 +1182,116 @@
       }
     }
 
+
+    /* ===== LOGIN PASSWORD ===== */
+    .loginOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, rgba(220,38,38,.28), rgba(0,0,0,.94) 55%), #120207;
+      backdrop-filter: blur(10px);
+    }
+
+    .loginOverlay.hide { display: none; }
+
+    .loginBox {
+      width: min(430px, 100%);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 28px;
+      padding: 28px;
+      background: linear-gradient(145deg, rgba(90,5,20,.96), rgba(20,2,8,.98));
+      box-shadow: 0 30px 90px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.12);
+      text-align: center;
+    }
+
+    .loginBox h2 {
+      font-size: 30px;
+      margin-bottom: 8px;
+      letter-spacing: .5px;
+    }
+
+    .loginBox p {
+      color: rgba(255,255,255,.76);
+      line-height: 1.5;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+
+    .loginBox input {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.1);
+      color: #fff;
+      outline: none;
+      font-size: 17px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .loginBox input::placeholder { color: rgba(255,255,255,.45); }
+
+    .loginBox button {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      box-shadow: 0 14px 30px rgba(239,68,68,.28);
+      font-size: 16px;
+    }
+
+    .loginError {
+      min-height: 20px;
+      margin-top: 12px;
+      color: #fecaca !important;
+      font-weight: 700;
+    }
+
+    .logoutBtn {
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      color: #fff;
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .unpaidShiftMini {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .unpaidShiftMini .total-box {
+      border-color: rgba(248,113,113,.35);
+      background: linear-gradient(135deg, rgba(127,29,29,.72), rgba(69,10,10,.58));
+    }
+
   </style>
 </head>
 
 <body>
+
+  <div class="loginOverlay" id="loginOverlay">
+    <div class="loginBox">
+      <h2>🔐 Login Website</h2>
+      <p>Masukkan password untuk membuka dashboard PAK BUD WATER.</p>
+      <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" />
+      <button onclick="loginWebsite()">Masuk</button>
+      <p class="loginError" id="loginError"></p>
+    </div>
+  </div>
   <div class="container">
     <header class="header">
       <div class="roseDecor roseOne">🌹</div>
@@ -1150,6 +1326,8 @@
         <div class="stat"><small>Terjual Bulan</small><b id="totalTerjual">0</b></div>
         <div class="stat"><small>Sisa Stock</small><b id="totalSisa">0</b></div>
         <div class="stat"><small>Belum Bayar Bulan</small><b id="belumBayar">0</b></div>
+        <div class="stat stat-shift-pagi"><small>Belum Bayar Shift Pagi</small><b id="belumBayarShiftPagi">0</b></div>
+        <div class="stat stat-shift-malam"><small>Belum Bayar Shift Malam</small><b id="belumBayarShiftMalam">0</b></div>
       </div>
 
       <div class="tools">
@@ -1159,6 +1337,7 @@
           <option value="D">Ruangan D</option>
           <option value="E">Ruangan E</option>
           <option value="F">Ruangan F</option>
+          <option value="G">Ruangan G</option>
           <option value="H">Ruangan H</option>
           <option value="J">Ruangan J</option>
         </select>
@@ -1168,6 +1347,7 @@
         <button class="addBtn dailyReportBtn" onclick="openDailyRecap()">📅 Rekapan Harian</button>
         <button class="addBtn reportBtn" onclick="openBuyerReport()">📊 Rekapan Bulan Ini</button>
         <button class="addBtn reportBtn unpaidReportBtn" onclick="openUnpaidNameReport()">💳 Data Khusus Belum Bayar</button>
+        <button class="logoutBtn" onclick="logoutWebsite()">Keluar</button>
       </div>
     </header>
 
@@ -1178,7 +1358,7 @@
     <div class="formBox">
       <h3 id="modalTitle">Tambah Pembeli</h3>
       <div class="field"><label>Nama</label><input id="formNama" placeholder="Masukkan nama" /></div>
-      <div class="field"><label>Ruangan</label><select id="formRoom"><option>D</option><option>E</option><option>F</option><option>H</option><option>J</option></select></div>
+      <div class="field"><label>Ruangan</label><select id="formRoom"><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>J</option></select></div>
       <div class="field"><label>Tanggal Pembelian</label><input id="formTanggal" type="date" /></div>
       <div class="field"><label>Jumlah Dibeli</label><input id="formBeli" type="number" min="0" placeholder="1" /></div>
       <div class="field"><label>Shift</label><select id="formShift"><option value="Pagi">SHIFT PAGI</option><option value="Malam">SHIFT MALAM</option></select></div>
@@ -1219,11 +1399,13 @@
       <div class="reportHeader">
         <button class="closeX" onclick="closeUnpaidNameReport()">×</button>
         <h3>Data Khusus Belum Bayar Per Nama</h3>
-        <p class="note" id="unpaidNameReportTitle">Otomatis menghitung akumulasi semua status Belum Bayar dari seluruh ruangan, semua tanggal, dan semua bulan yang tersimpan.</p>
+        <p class="note" id="unpaidNameReportTitle">Otomatis menghitung status Belum Bayar khusus bulan yang sedang dibuka. Jika bulan berganti, data laporan otomatis terpisah per bulan.</p>
       </div>
 
       <div class="stats" style="margin-bottom:16px">
         <div class="stat"><small>Total Belum Bayar</small><b id="unpaidNameCount">0</b></div>
+        <div class="stat stat-shift-pagi"><small>Belum Bayar Shift Pagi</small><b id="unpaidNameShiftPagi">0</b></div>
+        <div class="stat stat-shift-malam"><small>Belum Bayar Shift Malam</small><b id="unpaidNameShiftMalam">0</b></div>
       </div>
 
       <div class="reportTableWrap unpaidMetalWrap">
@@ -1255,6 +1437,8 @@
         <div class="stat"><small>Total Harian</small><b id="recapTotalHarian">0</b></div>
         <div class="stat"><small>Lunas Harian</small><b id="recapLunasHarian">0</b></div>
         <div class="stat"><small>Belum Bayar Harian</small><b id="recapBelumHarian">0</b></div>
+        <div class="stat stat-shift-pagi"><small>Belum Bayar Pagi</small><b id="recapBelumShiftPagi">0</b></div>
+        <div class="stat stat-shift-malam"><small>Belum Bayar Malam</small><b id="recapBelumShiftMalam">0</b></div>
         <div class="stat stat-shift-pagi"><small>Pembeli Shift Pagi</small><b id="recapPembeliShiftPagi">0</b></div>
         <div class="stat stat-shift-malam"><small>Pembeli Shift Malam</small><b id="recapPembeliShiftMalam">0</b></div>
       </div>
@@ -1282,6 +1466,45 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getFirestore, collection, doc, getDocs, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+    const WEBSITE_PASSWORD = "pakbud123";
+
+    function unlockWebsite() {
+      const overlay = document.getElementById("loginOverlay");
+      if (overlay) overlay.classList.add("hide");
+    }
+
+    window.loginWebsite = function() {
+      const input = document.getElementById("loginPassword");
+      const error = document.getElementById("loginError");
+      const value = (input?.value || "").trim();
+      if (value === WEBSITE_PASSWORD) {
+        if (error) error.textContent = "";
+        unlockWebsite();
+      } else {
+        if (error) error.textContent = "Password salah.";
+        if (input) { input.value = ""; input.focus(); }
+      }
+    };
+
+    window.logoutWebsite = function() {
+      const overlay = document.getElementById("loginOverlay");
+      if (overlay) overlay.classList.remove("hide");
+      const input = document.getElementById("loginPassword");
+      if (input) { input.value = ""; setTimeout(() => input.focus(), 50); }
+    };
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const overlay = document.getElementById("loginOverlay");
+      if (overlay) overlay.classList.remove("hide");
+      const input = document.getElementById("loginPassword");
+      if (input) {
+        setTimeout(() => input.focus(), 80);
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") window.loginWebsite();
+        });
+      }
+    });
+
     const firebaseConfig = {
       apiKey: "AIzaSyDIynJCkKlBN0oHyqrPXppnEWahYGNJsZY",
       authDomain: "dedy-b7d09.firebaseapp.com",
@@ -1294,7 +1517,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const rooms = ["D", "E", "F", "H", "J"];
+    const rooms = ["D", "E", "F", "G", "H", "J"];
 
     function todayKey() {
       return new Date().toISOString().slice(0, 10);
@@ -1305,11 +1528,12 @@
     const defaultMonthData = {
       stockOverall: 57,
       stockIn: 57,
-      roomStock: { D: 24, E: 19, F: 14, H: 0, J: 0 },
+      roomStock: { D: 24, E: 19, F: 14, G: 0, H: 0, J: 0 },
       data: {
         D: [makeItem("RAJAB",2,"Lunas"),makeItem("ALBERT",1,"Belum Bayar"),makeItem("RESITA",1,"Lunas"),makeItem("ITA",1,"Lunas"),makeItem("NANDA",1,"Belum Bayar"),makeItem("ALDI",1,"Lunas"),makeItem("IRVAN",1,"Belum Bayar"),makeItem("ANDRE",2,"Lunas"),makeItem("DIAN",2,"Lunas"),makeItem("FITO",1,"Lunas"),makeItem("YUNI",1,"Belum Bayar"),makeItem("LINUS",2,"Lunas"),makeItem("HAFIZ",4,"Lunas"),makeItem("REZA",1,"Belum Bayar"),makeItem("DARWIN",2,"Lunas"),makeItem("HABIB",2,"Lunas")],
         E: [makeItem("BILLY",1,"Lunas"),makeItem("FERRYS",1,"Belum Bayar"),makeItem("FREDAKIN",1,"Lunas"),makeItem("ILHAM",1,"Belum Bayar"),makeItem("DIKI",2,"Lunas"),makeItem("SAKTI",2,"Lunas"),makeItem("RISKI",1,"Belum Bayar"),makeItem("PUTRI",1,"Lunas"),makeItem("WAHYU",1,"Lunas"),makeItem("NASRUL",1,"Lunas"),makeItem("TIO",1,"Lunas"),makeItem("DENNY MUR",1,"Lunas"),makeItem("TRISMAN",1,"Lunas"),makeItem("BILLY",2,"Belum Bayar")],
         F: [makeItem("RAHMAT",2,"Belum Bayar"),makeItem("JAHUT",1,"Lunas"),makeItem("GULTOM",1,"Lunas"),makeItem("FELIX",1,"Lunas"),makeItem("MAINX",3,"Lunas"),makeItem("ALGHIFARI",1,"Lunas"),makeItem("DAPAN",2,"Lunas"),makeItem("IWAN",1,"Belum Bayar"),makeItem("DIAN",1,"Lunas")],
+        G: [],
         H: [],
         J: []
       }
@@ -1318,8 +1542,8 @@
     const emptyMonthData = () => ({
       stockOverall: 0,
       stockIn: 0,
-      roomStock: { D: 0, E: 0, F: 0, H: 0, J: 0 },
-      data: { D: [], E: [], F: [], H: [], J: [] }
+      roomStock: { D: 0, E: 0, F: 0, G: 0, H: 0, J: 0 },
+      data: { D: [], E: [], F: [], G: [], H: [], J: [] }
     });
 
     let state = { monthOffset: 0, months: {}, rawMonths: {} };
@@ -1359,8 +1583,6 @@
       base.stockIn = Math.max(0, Number(data.stockIn ?? legacyStock));
       base.stockOverall = base.stockIn;
 
-      // MIGRASI NAMA RUANGAN:
-      // Data lama: G -> tampil/simpan sebagai H, H -> tampil/simpan sebagai J.
       const migratedRoomStock = { ...(data.roomStock || {}) };
       const migratedData = { ...(data.data || {}) };
 
@@ -1372,19 +1594,6 @@
         }
       });
 
-      if (migratedRoomStock.G !== undefined && migratedRoomStock.H === undefined) {
-        migratedRoomStock.H = migratedRoomStock.G;
-      }
-      if ((data.roomStock || {}).H !== undefined && migratedRoomStock.J === undefined) {
-        migratedRoomStock.J = (data.roomStock || {}).H;
-      }
-
-      if (Array.isArray((data.data || {}).G) && !Array.isArray(migratedData.H)) {
-        migratedData.H = (data.data || {}).G;
-      }
-      if (Array.isArray((data.data || {}).H) && !Array.isArray(migratedData.J)) {
-        migratedData.J = (data.data || {}).H;
-      }
 
       rooms.forEach(room => {
         base.roomStock[room] = Number(migratedRoomStock?.[room] || 0);
@@ -1724,9 +1933,11 @@
         if (isBelumBayar(item.status)) sum.belum += jumlah;
         if (shift === "Pagi") sum.pembeliPagi += jumlah;
         if (shift === "Malam") sum.pembeliMalam += jumlah;
+        if (isBelumBayar(item.status) && shift === "Pagi") sum.belumPagi += jumlah;
+        if (isBelumBayar(item.status) && shift === "Malam") sum.belumMalam += jumlah;
         sum.jumlahPembeli += 1;
         return sum;
-      }, { total: 0, lunas: 0, belum: 0, jumlahPembeli: 0, pembeliPagi: 0, pembeliMalam: 0 });
+      }, { total: 0, lunas: 0, belum: 0, jumlahPembeli: 0, pembeliPagi: 0, pembeliMalam: 0, belumPagi: 0, belumMalam: 0 });
     }
 
 
@@ -1743,6 +1954,8 @@
       let totalTerjual = 0;
       let totalSisa = 0;
       let unpaid = 0;
+      let unpaidShiftPagi = 0;
+      let unpaidShiftMalam = 0;
       const ringkasanHarian = dailySummary(selectedDailyDate, selectedRoom);
 
       const month = currentMonth();
@@ -1759,14 +1972,26 @@
         const masuk = stockKeseluruhan;
         const terjualBulananRoom = roomSold(room);
         const terjual = roomSoldDaily(room, selectedDailyDate);
-        const belumBayarHariIniRoom = month.data[room]
+        const unpaidTodayItemsRoom = month.data[room]
           .map(normalizeItem)
-          .filter(item => item.tanggal === selectedDailyDate && item.status === "Belum Bayar")
+          .filter(item => item.tanggal === selectedDailyDate && isBelumBayar(item.status));
+        const belumBayarHariIniRoom = unpaidTodayItemsRoom
+          .reduce((sum, item) => sum + Number(item.beli || 0), 0);
+        const belumBayarPagiHariIniRoom = unpaidTodayItemsRoom
+          .filter(item => normalizeShift(item.shift) === "Pagi")
+          .reduce((sum, item) => sum + Number(item.beli || 0), 0);
+        const belumBayarMalamHariIniRoom = unpaidTodayItemsRoom
+          .filter(item => normalizeShift(item.shift) === "Malam")
           .reduce((sum, item) => sum + Number(item.beli || 0), 0);
 
         totalTerjual += terjualBulananRoom;
         month.data[room].map(normalizeItem).forEach(item => {
-          if (item.status === "Belum Bayar") unpaid += Number(item.beli || 0);
+          if (isBelumBayar(item.status)) {
+            const jumlah = Number(item.beli || 0);
+            unpaid += jumlah;
+            if (normalizeShift(item.shift) === "Pagi") unpaidShiftPagi += jumlah;
+            if (normalizeShift(item.shift) === "Malam") unpaidShiftMalam += jumlah;
+          }
         });
 
         // Akumulasi harian dihitung lewat dailySummary(), supaya tidak ikut berubah karena pencarian nama.
@@ -1818,6 +2043,10 @@
             <div class="stockPanel">
               <div class="total-box"><small>Terjual Hari Ini</small><b>${terjual}</b></div>
               <div class="total-box"><small>Belum Bayar</small><b>${belumBayarHariIniRoom}</b></div>
+              <div class="unpaidShiftMini">
+                <div class="total-box"><small>Belum Bayar Pagi</small><b>${belumBayarPagiHariIniRoom}</b></div>
+                <div class="total-box"><small>Belum Bayar Malam</small><b>${belumBayarMalamHariIniRoom}</b></div>
+              </div>
             </div>
           </div>
 
@@ -1839,6 +2068,8 @@
       document.getElementById("totalTerjual").textContent = totalTerjual;
       document.getElementById("totalSisa").textContent = totalSisa;
       document.getElementById("belumBayar").textContent = unpaid;
+      setText("belumBayarShiftPagi", unpaidShiftPagi);
+      setText("belumBayarShiftMalam", unpaidShiftMalam);
       const harianTerjualEl = document.getElementById("harianTerjual");
       if (harianTerjualEl) harianTerjualEl.textContent = ringkasanHarian.total;
       setText("harianLunas", ringkasanHarian.lunas);
@@ -2076,54 +2307,58 @@
     }
 
     function unpaidNameMonthSummary() {
-      const result = { __meta: { totalCatatan: 0, totalBelumBayar: 0, totalGalon: 0 } };
-      const allKeys = Array.from(new Set([
-        ...Object.keys(state.months || {}),
-        ...Object.keys(state.rawMonths || {})
-      ])).sort();
+      const activeMonthKey = monthKey();
+      const result = {
+        __activeMonth: activeMonthKey,
+        __meta: { totalCatatan: 0, totalBelumBayar: 0, totalGalon: 0 },
+        __shiftPagi: 0,
+        __shiftMalam: 0
+      };
 
-      allKeys.forEach(monthKeyStored => {
-        // Pakai satu rumus utama yang sama dengan Belum Bayar Harian:
-        // semua item dari safeMonthData, semua ruangan, semua tanggal, lalu status Belum Bayar.
-        // Raw/legacy hanya dipakai sebagai cadangan kalau bulan itu belum punya data safe.
-        const safeMonth = safeMonthData(state.months?.[monthKeyStored] || state.rawMonths?.[monthKeyStored] || {});
-        let monthItems = [];
+      // Data Khusus Belum Bayar sekarang dipisah per bulan.
+      // Jadi laporan hanya membaca bulan yang sedang dibuka, bukan akumulasi semua bulan.
+      const monthKeyStored = activeMonthKey;
+      const safeMonth = safeMonthData(state.months?.[monthKeyStored] || state.rawMonths?.[monthKeyStored] || currentMonth() || {});
+      let monthItems = [];
 
-        rooms.forEach(room => {
-          (safeMonth.data?.[room] || []).forEach(raw => {
-            const item = normalizeItem(raw);
-            if (!statusIsUnpaid(item.status)) return;
-            monthItems.push({
-              ...item,
-              room,
-              tanggal: String(item.tanggal || (monthKeyStored + "-01")).slice(0, 10),
-              beli: Math.max(0, Number(item.beli || 0))
-            });
+      rooms.forEach(room => {
+        (safeMonth.data?.[room] || []).forEach(raw => {
+          const item = normalizeItem(raw);
+          if (!statusIsUnpaid(item.status)) return;
+          monthItems.push({
+            ...item,
+            room,
+            tanggal: String(item.tanggal || (monthKeyStored + "-01")).slice(0, 10),
+            beli: Math.max(0, Number(item.beli || 0))
           });
         });
+      });
 
-        // Jika format data lama tidak masuk ke safeMonthData, baru scan raw object.
-        // Tidak ada dedupe antar item, karena Belum Bayar Harian juga menghitung setiap baris transaksi.
-        if (!monthItems.length) {
-          monthItems = collectUnpaidItemsFromRawMonth(state.rawMonths?.[monthKeyStored] || {}, monthKeyStored)
-            .filter(item => item.nama && statusIsUnpaid(item.status))
-            .map(item => ({
-              ...item,
-              room: normalizedRoomLabel(item.room),
-              tanggal: String(item.tanggal || (monthKeyStored + "-01")).slice(0, 10),
-              beli: Math.max(0, Number(item.beli || 0))
-            }));
-        }
+      // Jika format data lama tidak masuk ke safeMonthData, baru scan raw object bulan aktif saja.
+      if (!monthItems.length) {
+        monthItems = collectUnpaidItemsFromRawMonth(state.rawMonths?.[monthKeyStored] || {}, monthKeyStored)
+          .filter(item => item.nama && statusIsUnpaid(item.status))
+          .map(item => ({
+            ...item,
+            room: normalizedRoomLabel(item.room),
+            tanggal: String(item.tanggal || (monthKeyStored + "-01")).slice(0, 10),
+            beli: Math.max(0, Number(item.beli || 0))
+          }));
+      }
 
-        monthItems.forEach(item => {
+      monthItems.forEach(item => {
           if (!item.nama || !statusIsUnpaid(item.status)) return;
           const nama = String(item.nama || "").trim().toUpperCase();
           const tanggal = String(item.tanggal || (monthKeyStored + "-01")).slice(0, 10);
           const room = normalizedRoomLabel(item.room);
           const beli = Math.max(0, Number(item.beli || 0));
+          const shift = normalizeShift(item.shift);
+
+          if (shift === "Pagi") result.__shiftPagi += beli;
+          if (shift === "Malam") result.__shiftMalam += beli;
 
           if (!result[nama]) {
-            result[nama] = { total: 0, catatan: 0, rooms: {}, dates: new Set(), months: new Set() };
+            result[nama] = { total: 0, catatan: 0, rooms: {}, shifts: { Pagi: 0, Malam: 0 }, dates: new Set(), months: new Set() };
           }
 
           result.__meta.totalCatatan += 1;
@@ -2132,9 +2367,9 @@
           result[nama].catatan += 1;
           result[nama].total += beli;
           result[nama].rooms[room] = (result[nama].rooms[room] || 0) + beli;
+          result[nama].shifts[shift] = (result[nama].shifts[shift] || 0) + beli;
           result[nama].dates.add(tanggal);
           result[nama].months.add(monthKeyStored);
-        });
       });
 
       return result;
@@ -2145,11 +2380,14 @@
       if (!body) return;
 
       const summary = unpaidNameMonthSummary();
-      const names = Object.keys(summary).filter(name => name !== "__meta").sort((a, b) => summary[b].total - summary[a].total || a.localeCompare(b));
+      const names = Object.keys(summary).filter(name => !name.startsWith("__")).sort((a, b) => summary[b].total - summary[a].total || a.localeCompare(b));
 
+      const activeMonthText = String(summary.__activeMonth || monthKey());
       document.getElementById("unpaidNameReportTitle").textContent =
-        "Data khusus Belum Bayar memakai rumus yang sama dengan Belum Bayar Harian: total jumlah/beli dari semua transaksi Belum Bayar, semua tanggal, semua bulan, dan semua ruangan. Total otomatis ikut berubah saat data ditambah, diedit, atau dihapus.";
+        "Data khusus Belum Bayar khusus bulan " + activeMonthText + ". Sistem tidak lagi menggabungkan semua bulan. Saat pindah/ganti bulan, laporan otomatis membaca data bulan itu saja.";
       document.getElementById("unpaidNameCount").textContent = Number(summary.__meta?.totalBelumBayar || 0);
+      setText("unpaidNameShiftPagi", Number(summary.__shiftPagi || 0));
+      setText("unpaidNameShiftMalam", Number(summary.__shiftMalam || 0));
 
       if (!names.length) {
         body.innerHTML = '<tr><td colspan="4" class="center">Tidak ada data Belum Bayar yang tersimpan di Firebase</td></tr>';
@@ -2161,9 +2399,21 @@
             .map(room => 'Ruangan ' + escapeHtml(room) + ': ' + Number(item.rooms[room] || 0))
             .join('<br>');
           const dateText = Array.from(item.dates).sort().map(escapeHtml).join('<br>');
+          const pagiTotal = Number(item.shifts?.Pagi || 0);
+          const malamTotal = Number(item.shifts?.Malam || 0);
+          const shiftText = `
+            <div class="unpaidShiftMiniCol">
+              <span class="unpaidShiftBadge pagi ${pagiTotal ? '' : 'empty'}">PAGI ${pagiTotal}</span>
+              <span class="unpaidShiftBadge malam ${malamTotal ? '' : 'empty'}">MALAM ${malamTotal}</span>
+            </div>`;
 
           return `<tr>
-            <td><b>${escapeHtml(nama)}</b></td>
+            <td>
+              <div class="unpaidNameCell">
+                <span class="unpaidNameText">${escapeHtml(nama)}</span>
+                ${shiftText}
+              </div>
+            </td>
             <td class="center"><b>${Number(item.total || 0)}</b></td>
             <td>${roomText}</td>
             <td>${dateText}</td>
@@ -2174,9 +2424,9 @@
 
     window.openUnpaidNameReport = async function() {
       const body = document.getElementById("unpaidNameReportBody");
-      if (body) body.innerHTML = '<tr><td colspan="4" class="center">Membaca semua bulan tersimpan...</td></tr>';
+      if (body) body.innerHTML = '<tr><td colspan="4" class="center">Membaca data bulan aktif...</td></tr>';
       document.getElementById("unpaidNameReportModal").classList.add("show");
-      await loadAllStoredMonths();
+      currentMonth();
       renderUnpaidNameReport();
     };
 
@@ -2212,6 +2462,8 @@
       document.getElementById("recapTotalHarian").textContent = total;
       document.getElementById("recapLunasHarian").textContent = lunas;
       document.getElementById("recapBelumHarian").textContent = belum;
+      setText("recapBelumShiftPagi", summary.belumPagi);
+      setText("recapBelumShiftMalam", summary.belumMalam);
       document.getElementById("recapPembeliShiftPagi").textContent = recapPagi;
       document.getElementById("recapPembeliShiftMalam").textContent = recapMalam;
 
