@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Ruangan H J Live Firebase</title>
+  <title>Dashboard Ruangan H J Live Firebase - Data Belum Bayar</title>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
@@ -310,15 +310,39 @@
       width: 100%;
       padding: 14px 16px;
       border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.35);
-      color: white;
+      border: 1px solid rgba(148,163,184,.34);
+      background:
+        linear-gradient(145deg, rgba(88,96,108,.92) 0%, rgba(47,54,64,.96) 42%, rgba(20,24,31,.98) 100%);
+      color: #f8fafc;
       font-size: 15px;
       outline: none;
       font-weight: 800;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.16),
+        inset 0 -12px 22px rgba(0,0,0,.28),
+        0 10px 24px rgba(0,0,0,.28);
+      text-shadow: 0 1px 0 rgba(0,0,0,.45);
     }
 
-    .roomSelect option { color: #111827; }
+    .search::placeholder {
+      color: rgba(226,232,240,.72);
+    }
+
+    .search:focus, .roomSelect:focus, .dateInput:focus {
+      border-color: rgba(203,213,225,.72);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.20),
+        inset 0 -12px 22px rgba(0,0,0,.30),
+        0 0 0 3px rgba(148,163,184,.18),
+        0 12px 28px rgba(0,0,0,.34);
+    }
+
+    .dateInput::-webkit-calendar-picker-indicator {
+      filter: invert(1) opacity(.82);
+      cursor: pointer;
+    }
+
+    .roomSelect option { color: #f8fafc; background: #252b35; }
 
     .addBtn {
       border: 0;
@@ -340,6 +364,25 @@
     .reportBtn {
       background: linear-gradient(90deg, #38bdf8, #6366f1);
       color: white;
+    }
+
+
+    .unpaidReportBtn {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.08) 14%, transparent 28%),
+        linear-gradient(90deg, #5f0008 0%, #9b0614 28%, #d71920 52%, #7a000a 78%, #2a0004 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 176, 176, .38);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.35),
+        inset 0 -10px 18px rgba(0,0,0,.28),
+        0 12px 30px rgba(155,6,20,.36);
+      text-shadow: 0 1px 2px rgba(0,0,0,.55);
+    }
+
+    .unpaidReportBtn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
     }
 
     .stockManageBtn {
@@ -697,6 +740,43 @@
       position: sticky;
       top: 0;
       z-index: 3;
+    }
+
+
+    /* BACKGROUND KHUSUS DATA BELUM BAYAR - ABU ABU METALIK */
+    #unpaidNameReportModal .formBox {
+      background: linear-gradient(145deg, #111827, #2f3744 48%, #59606b);
+      border: 1px solid rgba(226,232,240,.38);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 25px 80px rgba(0,0,0,.68);
+    }
+
+    #unpaidNameReportModal .reportHeader {
+      background: linear-gradient(145deg, #111827, #2f3744 48%, #59606b);
+    }
+
+    .unpaidMetalWrap {
+      border: 1px solid rgba(226,232,240,.32);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 16px 35px rgba(0,0,0,.34);
+    }
+
+    .unpaidMetalTable th {
+      background: linear-gradient(135deg, #e5e7eb, #8b949e 45%, #f8fafc 55%, #6b7280);
+      color: #111827;
+      text-shadow: 0 1px 0 rgba(255,255,255,.55);
+    }
+
+    .unpaidMetalTable td {
+      background: linear-gradient(135deg, rgba(229,231,235,.24), rgba(107,114,128,.32)) !important;
+      color: #f8fafc;
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+
+    .unpaidMetalTable tr:nth-child(even) td {
+      background: linear-gradient(135deg, rgba(148,163,184,.30), rgba(71,85,105,.42)) !important;
+    }
+
+    .unpaidMetalTable tr:hover td {
+      background: linear-gradient(135deg, rgba(241,245,249,.34), rgba(100,116,139,.52)) !important;
     }
 
     .field { margin-bottom: 12px; }
@@ -1070,11 +1150,6 @@
         <div class="stat"><small>Terjual Bulan</small><b id="totalTerjual">0</b></div>
         <div class="stat"><small>Sisa Stock</small><b id="totalSisa">0</b></div>
         <div class="stat"><small>Belum Bayar Bulan</small><b id="belumBayar">0</b></div>
-        <div class="stat"><small>Total Harian</small><b id="harianTerjual">0</b></div>
-        <div class="stat"><small>Lunas Harian</small><b id="harianLunas">0</b></div>
-        <div class="stat"><small>Belum Bayar Harian</small><b id="harianBelum">0</b></div>
-        <div class="stat stat-shift-pagi"><small>Pembeli Shift Pagi</small><b id="pembeliShiftPagi">0</b></div>
-        <div class="stat stat-shift-malam"><small>Pembeli Shift Malam</small><b id="pembeliShiftMalam">0</b></div>
       </div>
 
       <div class="tools">
@@ -1092,6 +1167,7 @@
         <button class="addBtn stockManageBtn" onclick="openStockModal()">Stock masuk Bulan Ini</button>
         <button class="addBtn dailyReportBtn" onclick="openDailyRecap()">📅 Rekapan Harian</button>
         <button class="addBtn reportBtn" onclick="openBuyerReport()">📊 Rekapan Bulan Ini</button>
+        <button class="addBtn reportBtn unpaidReportBtn" onclick="openUnpaidNameReport()">💳 Data Khusus Belum Bayar</button>
       </div>
     </header>
 
@@ -1130,8 +1206,37 @@
       </div>
       <div class="reportTableWrap">
         <table>
-          <thead><tr><th>Nama Pembeli</th><th class="center">Total Bulan Ini</th><th class="center">Lunas</th><th class="center">Belum Bayar</th></tr></thead>
+          <thead><tr><th>Nama Pembeli</th><th class="center">Total Bulan Ini</th></tr></thead>
           <tbody id="buyerReportBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal" id="unpaidNameReportModal">
+    <div class="formBox" style="width:min(1100px,100%)">
+      <div class="reportHeader">
+        <button class="closeX" onclick="closeUnpaidNameReport()">×</button>
+        <h3>Data Khusus Belum Bayar Per Nama</h3>
+        <p class="note" id="unpaidNameReportTitle">Otomatis menghitung akumulasi semua status Belum Bayar dari seluruh ruangan, semua tanggal, dan semua bulan yang tersimpan.</p>
+      </div>
+
+      <div class="stats" style="margin-bottom:16px">
+        <div class="stat"><small>Total Belum Bayar</small><b id="unpaidNameCount">0</b></div>
+      </div>
+
+      <div class="reportTableWrap unpaidMetalWrap">
+        <table class="unpaidMetalTable">
+          <thead>
+            <tr>
+              <th>Nama Pembeli</th>
+              <th class="center">Total Belum Bayar</th>
+              <th>Rincian Ruangan</th>
+              <th>Tanggal</th>
+            </tr>
+          </thead>
+          <tbody id="unpaidNameReportBody"></tbody>
         </table>
       </div>
     </div>
@@ -1175,7 +1280,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getFirestore, collection, doc, getDocs, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDIynJCkKlBN0oHyqrPXppnEWahYGNJsZY",
@@ -1217,12 +1322,13 @@
       data: { D: [], E: [], F: [], H: [], J: [] }
     });
 
-    let state = { monthOffset: 0, months: {} };
+    let state = { monthOffset: 0, months: {}, rawMonths: {} };
     let selectedDay = todayKey();
     let editRoom = null;
     let editIndex = null;
     let editingStockRoom = null;
     let unsubscribeLive = null;
+    let unsubscribeAllMonths = null;
     let isRenderingFromFirebase = false;
 
     function normalizeItem(item) {
@@ -1257,6 +1363,14 @@
       // Data lama: G -> tampil/simpan sebagai H, H -> tampil/simpan sebagai J.
       const migratedRoomStock = { ...(data.roomStock || {}) };
       const migratedData = { ...(data.data || {}) };
+
+      // Dukung beberapa format data lama: ada yang menyimpan array ruangan langsung di root doc
+      // misalnya { D:[...], E:[...] } bukan di dalam field data.
+      rooms.forEach(room => {
+        if (!Array.isArray(migratedData[room]) && Array.isArray(data[room])) {
+          migratedData[room] = data[room];
+        }
+      });
 
       if (migratedRoomStock.G !== undefined && migratedRoomStock.H === undefined) {
         migratedRoomStock.H = migratedRoomStock.G;
@@ -1304,11 +1418,62 @@
       return doc(db, "dashboard_ruangan", key);
     }
 
+    function updateUnpaidNameCounter() {
+      const counter = document.getElementById("unpaidNameCount");
+      if (!counter) return;
+      const summary = unpaidNameMonthSummary();
+      // Disatukan dengan rumus Belum Bayar Harian: yang dihitung adalah total jumlah/beli,
+      // bukan jumlah nama unik dan bukan jumlah baris. Jadi total global harus sama dengan
+      // penjumlahan semua Belum Bayar harian dari semua tanggal dan semua bulan.
+      counter.textContent = Number(summary.__meta?.totalBelumBayar || 0);
+    }
+
+    function applyAllMonthsSnapshot(snap) {
+      snap.forEach(monthDoc => {
+        const key = monthDoc.id;
+        if (!key) return;
+        state.rawMonths[key] = monthDoc.data() || {};
+        state.months[key] = safeMonthData(monthDoc.data());
+      });
+      updateUnpaidNameCounter();
+      const unpaidModal = document.getElementById("unpaidNameReportModal");
+      if (unpaidModal && unpaidModal.classList.contains("show")) renderUnpaidNameReport();
+    }
+
+    async function loadAllStoredMonths() {
+      try {
+        const snap = await getDocs(collection(db, "dashboard_ruangan"));
+        applyAllMonthsSnapshot(snap);
+        setLiveStatus("🟢 Semua data bulan tersimpan berhasil dibaca untuk akumulasi Belum Bayar");
+      } catch (error) {
+        console.warn("Gagal ambil semua bulan tersimpan", error);
+        setLiveStatus("🟡 Data semua bulan belum bisa dibaca. Akumulasi memakai bulan yang sudah terbuka di perangkat ini.");
+        updateUnpaidNameCounter();
+      }
+    }
+
+    function listenAllStoredMonths() {
+      if (unsubscribeAllMonths) unsubscribeAllMonths();
+      try {
+        unsubscribeAllMonths = onSnapshot(collection(db, "dashboard_ruangan"), (snap) => {
+          applyAllMonthsSnapshot(snap);
+          render();
+        }, (error) => {
+          console.warn("Gagal realtime semua bulan", error);
+          loadAllStoredMonths();
+        });
+      } catch (error) {
+        console.warn("Gagal mulai realtime semua bulan", error);
+        loadAllStoredMonths();
+      }
+    }
+
     async function ensurePreviousMonthLoaded(key = monthKey()) {
       const prevKey = previousMonthKey(key);
       if (state.months[prevKey]) return;
       try {
         const snap = await getDoc(monthRefByKey(prevKey));
+        state.rawMonths[prevKey] = snap.exists() ? (snap.data() || {}) : {};
         state.months[prevKey] = snap.exists() ? safeMonthData(snap.data()) : emptyMonthData();
       } catch (error) {
         console.warn("Gagal ambil data bulan sebelumnya", error);
@@ -1370,6 +1535,7 @@
       try {
         const cleaned = safeMonthData(currentMonth());
         state.months[monthKey()] = cleaned;
+        state.rawMonths[monthKey()] = cleaned;
         await setDoc(monthRef(), cleaned, { merge: true });
         setLiveStatus("✅ Data tersimpan live di Firebase");
       } catch (error) {
@@ -1409,6 +1575,7 @@
           isRenderingFromFirebase = true;
 
           if (snapshot.exists()) {
+            state.rawMonths[key] = snapshot.data() || {};
             state.months[key] = safeMonthData(snapshot.data());
             setLiveStatus("🟢 Live realtime aktif - semua orang melihat data yang sama");
           } else {
@@ -1496,6 +1663,12 @@
 
     function roomRemaining(room) {
       return Math.max(0, Number(currentMonth().roomStock[room] || 0) - roomSold(room));
+    }
+
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
     }
 
     function escapeHtml(value) {
@@ -1666,11 +1839,18 @@
       document.getElementById("totalTerjual").textContent = totalTerjual;
       document.getElementById("totalSisa").textContent = totalSisa;
       document.getElementById("belumBayar").textContent = unpaid;
-      document.getElementById("harianTerjual").textContent = ringkasanHarian.total;
-      document.getElementById("harianLunas").textContent = ringkasanHarian.lunas;
-      document.getElementById("harianBelum").textContent = ringkasanHarian.belum;
-      document.getElementById("pembeliShiftPagi").textContent = ringkasanHarian.pembeliPagi;
-      document.getElementById("pembeliShiftMalam").textContent = ringkasanHarian.pembeliMalam;
+      const harianTerjualEl = document.getElementById("harianTerjual");
+      if (harianTerjualEl) harianTerjualEl.textContent = ringkasanHarian.total;
+      setText("harianLunas", ringkasanHarian.lunas);
+      setText("harianBelum", ringkasanHarian.belum);
+      setText("pembeliShiftPagi", ringkasanHarian.pembeliPagi);
+      setText("pembeliShiftMalam", ringkasanHarian.pembeliMalam);
+      updateUnpaidNameCounter();
+
+      const unpaidModal = document.getElementById("unpaidNameReportModal");
+      if (unpaidModal && unpaidModal.classList.contains("show")) {
+        renderUnpaidNameReport();
+      }
     }
 
     window.openAdd = function() {
@@ -1789,11 +1969,11 @@
       const names = Object.keys(summary).sort();
 
       if (!names.length) {
-        body.innerHTML = '<tr><td colspan="4" class="center">Belum ada data pembeli di bulan ini</td></tr>';
+        body.innerHTML = '<tr><td colspan="2" class="center">Belum ada data pembeli di bulan ini</td></tr>';
       } else {
         body.innerHTML = names.map(nama => {
           const item = summary[nama];
-          return '<tr><td>' + escapeHtml(nama) + '</td><td class="center">' + item.total + '</td><td class="center">' + (item.lunas || '-') + '</td><td class="center">' + (item.belum || '-') + '</td></tr>';
+          return '<tr><td>' + escapeHtml(nama) + '</td><td class="center">' + item.total + '</td></tr>';
         }).join('');
       }
 
@@ -1802,6 +1982,206 @@
 
     window.closeBuyerReport = function() {
       document.getElementById("buyerReportModal").classList.remove("show");
+    };
+
+    function statusIsUnpaid(value) {
+      const text = String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[\s_\-]+/g, " ");
+      return text === "belum bayar" || text === "belumbayar" || (text.includes("belum") && text.includes("bayar"));
+    }
+
+    function looksLikeBuyerItem(value) {
+      if (Array.isArray(value)) {
+        return value.length >= 3 && String(value[0] || "").trim() && statusIsUnpaid(value[2]);
+      }
+      if (!value || typeof value !== "object") return false;
+      return String(value.nama || value.name || value.pembeli || "").trim() && statusIsUnpaid(value.status || value.pembayaran || value.paymentStatus);
+    }
+
+    function itemFromAnyFormat(value, fallbackRoom, fallbackMonth) {
+      if (Array.isArray(value)) {
+        return {
+          nama: String(value[0] || "").trim().toUpperCase(),
+          beli: Math.max(0, Number(value[1] || 0)),
+          status: value[2] || "",
+          tanggal: value[3] || (fallbackMonth + "-01"),
+          shift: value[4] || "",
+          room: fallbackRoom || value[5] || "-"
+        };
+      }
+      return {
+        nama: String(value.nama || value.name || value.pembeli || "").trim().toUpperCase(),
+        beli: Math.max(0, Number(value.beli ?? value.total ?? value.jumlah ?? value.galon ?? 0)),
+        status: value.status || value.pembayaran || value.paymentStatus || "",
+        tanggal: value.tanggal || value.date || value.createdAt || (fallbackMonth + "-01"),
+        shift: value.shift || "",
+        room: value.room || value.ruangan || fallbackRoom || "-"
+      };
+    }
+
+    function normalizedRoomLabel(label) {
+      const text = String(label || "-").toUpperCase();
+      // Data lama kadang masih menyimpan ruangan G. Untuk laporan tetap dihitung,
+      // jangan dibuang hanya karena ruangan H/J sudah ada.
+      return text || "-";
+    }
+
+    function collectUnpaidItemsFromRawMonth(rawMonth, fallbackMonth) {
+      const found = [];
+      const seenObjects = new WeakSet();
+
+      function walk(value, path = [], fallbackRoom = "-") {
+        if (value && typeof value === "object") {
+          if (seenObjects.has(value)) return;
+          seenObjects.add(value);
+        }
+
+        if (looksLikeBuyerItem(value)) {
+          found.push(itemFromAnyFormat(value, fallbackRoom, fallbackMonth));
+          return;
+        }
+
+        if (Array.isArray(value)) {
+          value.forEach((child, index) => walk(child, path.concat(String(index)), fallbackRoom));
+          return;
+        }
+
+        if (!value || typeof value !== "object") return;
+
+        Object.keys(value).forEach(key => {
+          const child = value[key];
+          const roomKey = rooms.includes(String(key).toUpperCase()) || ["G", "RUANGAN", "ROOM"].includes(String(key).toUpperCase())
+            ? String(key).toUpperCase()
+            : fallbackRoom;
+          walk(child, path.concat(key), roomKey);
+        });
+      }
+
+      walk(rawMonth || {}, [], "-");
+      return found;
+    }
+
+    function collectUnpaidItemsFromSafeMonth(monthData, fallbackMonth) {
+      const found = [];
+      rooms.forEach(room => {
+        (monthData.data?.[room] || []).forEach(raw => {
+          const item = normalizeItem(raw);
+          if (!statusIsUnpaid(item.status)) return;
+          found.push({ ...item, room, tanggal: item.tanggal || (fallbackMonth + "-01") });
+        });
+      });
+      return found;
+    }
+
+    function unpaidNameMonthSummary() {
+      const result = { __meta: { totalCatatan: 0, totalBelumBayar: 0, totalGalon: 0 } };
+      const allKeys = Array.from(new Set([
+        ...Object.keys(state.months || {}),
+        ...Object.keys(state.rawMonths || {})
+      ])).sort();
+
+      allKeys.forEach(monthKeyStored => {
+        // Pakai satu rumus utama yang sama dengan Belum Bayar Harian:
+        // semua item dari safeMonthData, semua ruangan, semua tanggal, lalu status Belum Bayar.
+        // Raw/legacy hanya dipakai sebagai cadangan kalau bulan itu belum punya data safe.
+        const safeMonth = safeMonthData(state.months?.[monthKeyStored] || state.rawMonths?.[monthKeyStored] || {});
+        let monthItems = [];
+
+        rooms.forEach(room => {
+          (safeMonth.data?.[room] || []).forEach(raw => {
+            const item = normalizeItem(raw);
+            if (!statusIsUnpaid(item.status)) return;
+            monthItems.push({
+              ...item,
+              room,
+              tanggal: String(item.tanggal || (monthKeyStored + "-01")).slice(0, 10),
+              beli: Math.max(0, Number(item.beli || 0))
+            });
+          });
+        });
+
+        // Jika format data lama tidak masuk ke safeMonthData, baru scan raw object.
+        // Tidak ada dedupe antar item, karena Belum Bayar Harian juga menghitung setiap baris transaksi.
+        if (!monthItems.length) {
+          monthItems = collectUnpaidItemsFromRawMonth(state.rawMonths?.[monthKeyStored] || {}, monthKeyStored)
+            .filter(item => item.nama && statusIsUnpaid(item.status))
+            .map(item => ({
+              ...item,
+              room: normalizedRoomLabel(item.room),
+              tanggal: String(item.tanggal || (monthKeyStored + "-01")).slice(0, 10),
+              beli: Math.max(0, Number(item.beli || 0))
+            }));
+        }
+
+        monthItems.forEach(item => {
+          if (!item.nama || !statusIsUnpaid(item.status)) return;
+          const nama = String(item.nama || "").trim().toUpperCase();
+          const tanggal = String(item.tanggal || (monthKeyStored + "-01")).slice(0, 10);
+          const room = normalizedRoomLabel(item.room);
+          const beli = Math.max(0, Number(item.beli || 0));
+
+          if (!result[nama]) {
+            result[nama] = { total: 0, catatan: 0, rooms: {}, dates: new Set(), months: new Set() };
+          }
+
+          result.__meta.totalCatatan += 1;
+          result.__meta.totalBelumBayar += beli;
+          result.__meta.totalGalon += beli;
+          result[nama].catatan += 1;
+          result[nama].total += beli;
+          result[nama].rooms[room] = (result[nama].rooms[room] || 0) + beli;
+          result[nama].dates.add(tanggal);
+          result[nama].months.add(monthKeyStored);
+        });
+      });
+
+      return result;
+    }
+
+    function renderUnpaidNameReport() {
+      const body = document.getElementById("unpaidNameReportBody");
+      if (!body) return;
+
+      const summary = unpaidNameMonthSummary();
+      const names = Object.keys(summary).filter(name => name !== "__meta").sort((a, b) => summary[b].total - summary[a].total || a.localeCompare(b));
+
+      document.getElementById("unpaidNameReportTitle").textContent =
+        "Data khusus Belum Bayar memakai rumus yang sama dengan Belum Bayar Harian: total jumlah/beli dari semua transaksi Belum Bayar, semua tanggal, semua bulan, dan semua ruangan. Total otomatis ikut berubah saat data ditambah, diedit, atau dihapus.";
+      document.getElementById("unpaidNameCount").textContent = Number(summary.__meta?.totalBelumBayar || 0);
+
+      if (!names.length) {
+        body.innerHTML = '<tr><td colspan="4" class="center">Tidak ada data Belum Bayar yang tersimpan di Firebase</td></tr>';
+      } else {
+        body.innerHTML = names.map(nama => {
+          const item = summary[nama];
+          const roomText = '<b>Catatan/Nama: ' + Number(item.catatan || 0) + '</b><br>' + Object.keys(item.rooms)
+            .sort()
+            .map(room => 'Ruangan ' + escapeHtml(room) + ': ' + Number(item.rooms[room] || 0))
+            .join('<br>');
+          const dateText = Array.from(item.dates).sort().map(escapeHtml).join('<br>');
+
+          return `<tr>
+            <td><b>${escapeHtml(nama)}</b></td>
+            <td class="center"><b>${Number(item.total || 0)}</b></td>
+            <td>${roomText}</td>
+            <td>${dateText}</td>
+          </tr>`;
+        }).join('');
+      }
+    }
+
+    window.openUnpaidNameReport = async function() {
+      const body = document.getElementById("unpaidNameReportBody");
+      if (body) body.innerHTML = '<tr><td colspan="4" class="center">Membaca semua bulan tersimpan...</td></tr>';
+      document.getElementById("unpaidNameReportModal").classList.add("show");
+      await loadAllStoredMonths();
+      renderUnpaidNameReport();
+    };
+
+    window.closeUnpaidNameReport = function() {
+      document.getElementById("unpaidNameReportModal").classList.remove("show");
     };
 
 
@@ -1886,6 +2266,7 @@
       renderDate();
       currentMonth();
       render();
+      listenAllStoredMonths();
       listenLiveData();
     });
   </script>
