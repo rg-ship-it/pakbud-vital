@@ -1,7 +1,3 @@
-
-
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1278,6 +1274,131 @@
       background: linear-gradient(135deg, rgba(127,29,29,.72), rgba(69,10,10,.58));
     }
 
+
+    .stockNowGrid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 14px;
+    }
+    .stockNowCard {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+    }
+    .stockNowCard small {
+      display: block;
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .stockNowCard b { font-size: 22px; color: #fff; }
+    .stockNowCard.green b { color: #4ade80; }
+    .stockNowCard.yellow b { color: #facc15; }
+    .stockFormulaBox {
+      margin: 10px 0 14px;
+      padding: 12px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(14,165,233,.12));
+      border: 1px solid rgba(74,222,128,.35);
+      color: #e5e7eb;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+    .stockRecapBox {
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid rgba(74,222,128,.35);
+      border-radius: 16px;
+      background: rgba(0,0,0,.30);
+      max-height: 360px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .stockRecapBox h4 { margin: 0 0 6px; font-size: clamp(14px, 3.2vw, 16px); color: #fff; line-height: 1.25; }
+    .stockRecapHint { margin: 0 0 12px; color: #cbd5e1; font-size: 12px; line-height: 1.45; }
+    .stockRecapBox table {
+      width: 100%;
+      min-width: 0;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      table-layout: fixed;
+    }
+    .stockRecapBox th,
+    .stockRecapBox td {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      vertical-align: middle;
+    }
+    .stockRecapBox th { padding: 9px 5px; color: #cbd5e1; font-size: clamp(8px, 2.25vw, 11px); text-transform: uppercase; text-align: left; background: rgba(255,255,255,.08); line-height: 1.15; }
+    .stockRecapBox td { padding: 11px 5px; background: rgba(15,23,42,.92); border-top: 1px solid rgba(255,255,255,.10); border-bottom: 1px solid rgba(255,255,255,.10); font-size: clamp(10px, 2.6vw, 13px); line-height: 1.2; font-weight: 800; }
+    .stockRecapBox th:nth-child(1), .stockRecapBox td:nth-child(1) { width: 25%; }
+    .stockRecapBox th:nth-child(2), .stockRecapBox td:nth-child(2) { width: 15%; }
+    .stockRecapBox th:nth-child(3), .stockRecapBox td:nth-child(3) { width: 17%; }
+    .stockRecapBox th:nth-child(4), .stockRecapBox td:nth-child(4) { width: 14%; }
+    .stockRecapBox th:nth-child(5), .stockRecapBox td:nth-child(5) { width: 17%; }
+    .stockRecapBox th:nth-child(6), .stockRecapBox td:nth-child(6) { width: 12%; }
+    .stockRecapBox td:first-child { border-left: 1px solid rgba(255,255,255,.10); border-radius: 12px 0 0 12px; }
+    .stockRecapBox td:last-child { border-right: 1px solid rgba(255,255,255,.10); border-radius: 0 12px 12px 0; }
+    .stockRecapBox tr.latest td { background: rgba(6,78,59,.88); border-color: rgba(74,222,128,.35); }
+    .stockRecapBox .center { text-align: center; }
+    .stockBadgePlus { color: #4ade80; font-size: clamp(11px, 3vw, 16px); }
+    .stockBadgeTotal { color: #facc15; font-size: clamp(11px, 3vw, 16px); }
+    .deleteStockBtn {
+      border: 0;
+      border-radius: 9px;
+      padding: 7px 6px;
+      cursor: pointer;
+      font-size: clamp(9px, 2.35vw, 12px);
+      line-height: 1.1;
+      font-weight: 900;
+      background: linear-gradient(90deg, #ef4444, #b91c1c);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(239,68,68,.22);
+      white-space: normal;
+      width: 100%;
+    }
+    .deleteStockBtn:hover { filter: brightness(1.08); }
+    .deleteStockBtn:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+      background: #475569;
+      box-shadow: none;
+    }
+    .todayDeleteInfo {
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(250,204,21,.10);
+      border: 1px solid rgba(250,204,21,.30);
+      color: #fde68a;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+    @media (max-width: 720px) { .stockNowGrid { grid-template-columns: 1fr; } }
+    .deleteWarningToast {
+      position: fixed;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
+      z-index: 99999;
+      display: none;
+      padding: 14px 22px;
+      border-radius: 999px;
+      background: #dc2626;
+      color: #fff;
+      font-weight: 900;
+      letter-spacing: .8px;
+      box-shadow: 0 18px 45px rgba(0,0,0,.45);
+      border: 2px solid rgba(255,255,255,.55);
+    }
+    .deleteWarningToast.show { display: block; }
+
   </style>
 </head>
 
@@ -1354,6 +1475,8 @@
     <section class="grid" id="grid"></section>
   </div>
 
+  <div class="deleteWarningToast" id="deleteWarningToast">JANGAN ASAL HAPUS BOS</div>
+
   <div class="modal" id="modal">
     <div class="formBox">
       <h3 id="modalTitle">Tambah Pembeli</h3>
@@ -1370,9 +1493,24 @@
   <div class="modal" id="stockModal">
     <div class="formBox">
       <h3 id="stockTitle">Stock Keseluruhan Bulan Ini</h3>
-      <p class="note">Masukkan stock barang masuk bulan ini saja. Sistem otomatis menambahkan sisa stock bulan sebelumnya.</p>
-      <div class="field"><label>Stock Barang Masuk Bulan Ini</label><input id="stockValueOverall" type="number" min="0" /></div>
-      <p class="note" id="autoStockNote">Total stock tersedia otomatis dihitung: Sisa bulan sebelumnya + Stock masuk bulan ini.</p>
+      <p class="note">Gunakan kolom <b>Tambah Stock Masuk</b>. Contoh: stock sekarang 890 lalu datang 300, isi 300. Sistem otomatis membuat catatan 890 + 300 = 1190.</p>
+      <div class="stockNowGrid">
+        <div class="stockNowCard"><small>Stock Bulan Ini Sebelum Ditambah</small><b id="stockNowBefore">0</b></div>
+        <div class="stockNowCard green"><small>Tambah Stock Masuk</small><b id="stockPreviewIn">+0</b></div>
+        <div class="stockNowCard yellow"><small>Total Setelah Disimpan</small><b id="stockPreviewAfter">0</b></div>
+      </div>
+      <div class="field"><label>Tambah Stock Masuk</label><input id="stockValueOverall" type="number" min="0" placeholder="Contoh: 300" oninput="updateStockPreview()" /></div>
+      <div class="field"><label>Tanggal Stock Masuk</label><input id="stockDateOverall" type="date" /></div>
+      <div class="stockFormulaBox" id="autoStockNote">Stock sekarang 0 + stock masuk 0 = total 0.</div>
+      <div class="stockRecapBox">
+        <h4>📦 Catatan Rekapan Stock Masuk Bulan Ini</h4>
+        <p class="stockRecapHint">Setiap kali stock masuk disimpan, catatan akan menampilkan tanggal, hari, stock sebelum, jumlah masuk, dan total setelah masuk.</p>
+        <p class="todayDeleteInfo">Tombol <b>Hapus</b> hanya aktif untuk stock masuk tanggal hari ini, supaya kalau salah input bisa dibatalkan.</p>
+        <table>
+          <thead><tr><th>Tanggal</th><th>Hari</th><th class="center">Sebelum</th><th class="center">Masuk</th><th class="center">Total</th><th class="center">Aksi</th></tr></thead>
+          <tbody id="stockRecapBody"><tr><td colspan="6" class="center">Belum ada catatan stock masuk.</td></tr></tbody>
+        </table>
+      </div>
       <div class="formAction"><button class="cancelBtn" onclick="closeStockModal()">Batal</button><button class="saveBtn" onclick="saveRoomStock()">Simpan Stock</button></div>
     </div>
   </div>
@@ -1542,6 +1680,7 @@
     const emptyMonthData = () => ({
       stockOverall: 0,
       stockIn: 0,
+      stockLogs: [],
       roomStock: { D: 0, E: 0, F: 0, G: 0, H: 0, J: 0 },
       data: { D: [], E: [], F: [], G: [], H: [], J: [] }
     });
@@ -1575,6 +1714,90 @@
       };
     }
 
+
+    function dayNameFromDate(dateKey) {
+      const d = new Date((dateKey || todayKey()) + "T00:00:00");
+      return d.toLocaleDateString("id-ID", { weekday: "long" });
+    }
+
+    function normalizeStockLog(log) {
+      const tanggal = log?.tanggal || todayKey();
+      const jumlah = Math.max(0, Number(log?.jumlah || 0));
+      const sebelum = Math.max(0, Number(log?.sebelum || 0));
+      const setelah = Math.max(0, Number(log?.setelah ?? (sebelum + jumlah)));
+      return {
+        tanggal,
+        hari: log?.hari || dayNameFromDate(tanggal),
+        jumlah,
+        sebelum,
+        setelah,
+        waktu: log?.waktu || new Date().toISOString()
+      };
+    }
+
+    function renderStockRecap() {
+      const body = document.getElementById("stockRecapBody");
+      if (!body) return;
+      const month = currentMonth();
+      const logsWithIndex = Array.isArray(month.stockLogs)
+        ? month.stockLogs.map((raw, originalIndex) => ({ ...normalizeStockLog(raw), originalIndex })).filter(log => log.jumlah > 0)
+        : [];
+      if (!logsWithIndex.length) {
+        body.innerHTML = '<tr><td colspan="6" class="center">Belum ada catatan stock masuk.</td></tr>';
+        return;
+      }
+      const today = todayKey();
+      const sorted = logsWithIndex.slice().sort((a, b) => String(b.waktu || b.tanggal).localeCompare(String(a.waktu || a.tanggal)));
+      body.innerHTML = sorted
+        .map((log, idx) => {
+          const canDelete = log.tanggal === today;
+          const action = canDelete
+            ? `<button class="deleteStockBtn" onclick="deleteStockLog(${log.originalIndex})">Hapus</button>`
+            : `<button class="deleteStockBtn" disabled title="Hanya stock masuk hari ini yang bisa dihapus">Lewat</button>`;
+          return `<tr class="${idx === 0 ? 'latest' : ''}"><td>${escapeHtml(log.tanggal)}</td><td>${escapeHtml(log.hari)}</td><td class="center">${Number(log.sebelum || 0)}</td><td class="center stockBadgePlus">+${Number(log.jumlah || 0)}</td><td class="center stockBadgeTotal">${Number(log.setelah || 0)}</td><td class="center">${action}</td></tr>`;
+        })
+        .join("");
+    }
+
+    function rebuildStockAfterLogChange(month) {
+      if (!Array.isArray(month.stockLogs)) month.stockLogs = [];
+      const logs = month.stockLogs.map(normalizeStockLog).filter(log => log.jumlah > 0);
+      logs.sort((a, b) => String(a.waktu || a.tanggal).localeCompare(String(b.waktu || b.tanggal)));
+      let running = 0;
+      month.stockLogs = logs.map(log => {
+        const sebelum = running;
+        const jumlah = Math.max(0, Number(log.jumlah || 0));
+        running += jumlah;
+        return normalizeStockLog({ ...log, sebelum, jumlah, setelah: running });
+      });
+      month.stockIn = running;
+      month.stockOverall = running;
+    }
+
+    window.updateStockPreview = function() {
+      const month = currentMonth();
+      const before = stockInThisMonth(month);
+      const add = Math.max(0, Number(document.getElementById("stockValueOverall")?.value || 0));
+      const after = before + add;
+      const beforeEl = document.getElementById("stockNowBefore");
+      const inEl = document.getElementById("stockPreviewIn");
+      const afterEl = document.getElementById("stockPreviewAfter");
+      const note = document.getElementById("autoStockNote");
+      if (beforeEl) beforeEl.textContent = before;
+      if (inEl) inEl.textContent = `+${add}`;
+      if (afterEl) afterEl.textContent = after;
+      if (note) note.textContent = `Stock sekarang ${before} + stock masuk ${add} = total stock bulan ini ${after}. Total tersedia termasuk sisa bulan sebelumnya: ${previousMonthRemaining(monthKey())} + ${after} = ${previousMonthRemaining(monthKey()) + after}.`;
+    };
+
+    function showDeleteWarning() {
+      const toast = document.getElementById("deleteWarningToast");
+      if (!toast) return;
+      toast.textContent = "JANGAN ASAL HAPUS BOS";
+      toast.classList.add("show");
+      clearTimeout(showDeleteWarning._timer);
+      showDeleteWarning._timer = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
     function safeMonthData(data) {
       const base = emptyMonthData();
       if (!data) return base;
@@ -1582,6 +1805,9 @@
       const legacyStock = Number(data.stockOverall ?? Object.values(data.roomStock || {}).reduce((sum, value) => sum + Number(value || 0), 0));
       base.stockIn = Math.max(0, Number(data.stockIn ?? legacyStock));
       base.stockOverall = base.stockIn;
+      base.stockLogs = Array.isArray(data.stockLogs)
+        ? data.stockLogs.map(normalizeStockLog).filter(log => log.jumlah > 0)
+        : [];
 
       const migratedRoomStock = { ...(data.roomStock || {}) };
       const migratedData = { ...(data.data || {}) };
@@ -2144,19 +2370,47 @@
     };
 
     window.deleteData = async function(room, index) {
-      if (confirm("Yakin mau hapus data ini?")) {
+      showDeleteWarning();
+      if (confirm("JANGAN ASAL HAPUS BOS\n\nYakin data ini benar-benar mau dihapus?")) {
         currentMonth().data[room].splice(index, 1);
         await persist();
         render();
       }
     };
 
-    window.openStockModal = function() {
+
+    window.deleteStockLog = async function(logIndex) {
       const month = currentMonth();
+      if (!Array.isArray(month.stockLogs) || !month.stockLogs[logIndex]) return;
+      const log = normalizeStockLog(month.stockLogs[logIndex]);
+
+      showDeleteWarning();
+      if (log.tanggal !== todayKey()) {
+        alert("Stock masuk ini bukan tanggal hari ini, jadi tidak bisa dihapus lewat tombol cepat.");
+        return;
+      }
+
+      const yakin = confirm(`JANGAN ASAL HAPUS BOS
+
+Yakin mau hapus stock masuk hari ini sebesar +${Number(log.jumlah || 0)}?`);
+      if (!yakin) return;
+
+      month.stockLogs.splice(logIndex, 1);
+      rebuildStockAfterLogChange(month);
+      await persist();
+      updateStockPreview();
+      renderStockRecap();
+      render();
+      document.getElementById("stockModal").classList.add("show");
+    };
+
+    window.openStockModal = function() {
       const input = document.getElementById("stockValueOverall");
-      if (input) input.value = stockInThisMonth(month);
-      const note = document.getElementById("autoStockNote");
-      if (note) note.textContent = `Sisa bulan sebelumnya: ${previousMonthRemaining(monthKey())}. Total stock tersedia otomatis: ${previousMonthRemaining(monthKey())} + ${stockInThisMonth(month)} = ${overallStock(month, monthKey())}.`;
+      if (input) input.value = "";
+      const dateInput = document.getElementById("stockDateOverall");
+      if (dateInput) dateInput.value = selectedDay || todayKey();
+      updateStockPreview();
+      renderStockRecap();
       document.getElementById("stockModal").classList.add("show");
     };
 
@@ -2167,8 +2421,21 @@
     window.saveRoomStock = async function() {
       const month = currentMonth();
       const input = document.getElementById("stockValueOverall");
-      month.stockIn = Math.max(0, Number(input?.value || 0));
-      month.stockOverall = month.stockIn;
+      const dateInput = document.getElementById("stockDateOverall");
+      const sebelum = stockInThisMonth(month);
+      const tambahanMasuk = Math.max(0, Number(input?.value || 0));
+
+      if (tambahanMasuk <= 0) {
+        alert("Isi jumlah stock masuk dulu, contoh: 300");
+        return;
+      }
+
+      const setelah = sebelum + tambahanMasuk;
+      if (!Array.isArray(month.stockLogs)) month.stockLogs = [];
+      const tanggal = dateInput?.value || selectedDay || todayKey();
+      month.stockLogs.push(normalizeStockLog({ tanggal, jumlah: tambahanMasuk, sebelum, setelah }));
+
+      rebuildStockAfterLogChange(month);
       await persist();
       closeStockModal();
       render();
