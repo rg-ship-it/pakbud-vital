@@ -1,3 +1,9 @@
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -424,11 +430,20 @@
       border-radius: 50%;
     }
 
-    .room-D { background: linear-gradient(135deg, #4c0519, #172554, #083344); }
-    .room-E { background: linear-gradient(135deg, #451a03, #4c0519, #2e1065); }
-    .room-F { background: linear-gradient(135deg, #064e3b, #020617, #1e3a8a); }
-    .room-H { background: linear-gradient(135deg, #312e81, #581c87, #831843); }
-    .room-J { background: linear-gradient(135deg, #1c1917, #7f1d1d, #9a3412); }
+    /* BACKGROUND UTAMA SETIAP RUANGAN - dibuat beda warna dan lebih jelas */
+    .room-D { background: linear-gradient(135deg, #06213f 0%, #0e7490 48%, #064e3b 100%); border-color: rgba(56,189,248,.45); }
+    .room-E { background: linear-gradient(135deg, #431407 0%, #c2410c 50%, #7c2d12 100%); border-color: rgba(251,146,60,.48); }
+    .room-F { background: linear-gradient(135deg, #052e16 0%, #15803d 50%, #064e3b 100%); border-color: rgba(74,222,128,.48); }
+    .room-G { background: linear-gradient(135deg, #422006 0%, #ca8a04 50%, #713f12 100%); border-color: rgba(250,204,21,.50); }
+    .room-H { background: linear-gradient(135deg, #2e1065 0%, #7e22ce 48%, #831843 100%); border-color: rgba(192,132,252,.50); }
+    .room-J { background: linear-gradient(135deg, #450a0a 0%, #b91c1c 48%, #7f1d1d 100%); border-color: rgba(248,113,113,.50); }
+
+    .room-D .total-box, .room-D .dailyInfo, .room-D .shiftBlock { background: rgba(8,47,73,.58); border-color: rgba(56,189,248,.30); }
+    .room-E .total-box, .room-E .dailyInfo, .room-E .shiftBlock { background: rgba(124,45,18,.52); border-color: rgba(251,146,60,.30); }
+    .room-F .total-box, .room-F .dailyInfo, .room-F .shiftBlock { background: rgba(6,78,59,.54); border-color: rgba(74,222,128,.30); }
+    .room-G .total-box, .room-G .dailyInfo, .room-G .shiftBlock { background: rgba(113,63,18,.54); border-color: rgba(250,204,21,.32); }
+    .room-H .total-box, .room-H .dailyInfo, .room-H .shiftBlock { background: rgba(88,28,135,.54); border-color: rgba(192,132,252,.32); }
+    .room-J .total-box, .room-J .dailyInfo, .room-J .shiftBlock { background: rgba(127,29,29,.54); border-color: rgba(248,113,113,.32); }
 
     .room-head {
       position: relative;
@@ -607,6 +622,11 @@
       color: white;
     }
 
+    .room-G th {
+      background: linear-gradient(90deg, #facc15, #ca8a04);
+      color: #111827;
+    }
+
     .room-H th {
       background: linear-gradient(90deg, #a855f7, #7e22ce);
       color: white;
@@ -617,24 +637,32 @@
       color: white;
     }
 
-    .room-D tbody tr:nth-child(even) td {
-      background: rgba(14,165,233,.18);
-    }
+    /* WARNA ISI TABEL PER RUANGAN, supaya kolom dalamnya ikut beda warna */
+    .room-D tbody tr:nth-child(odd) td { background: rgba(8,47,73,.72); }
+    .room-D tbody tr:nth-child(even) td { background: rgba(14,116,144,.58); }
 
-    .room-E tbody tr:nth-child(even) td {
-      background: rgba(249,115,22,.18);
-    }
+    .room-E tbody tr:nth-child(odd) td { background: rgba(124,45,18,.70); }
+    .room-E tbody tr:nth-child(even) td { background: rgba(194,65,12,.56); }
 
-    .room-F tbody tr:nth-child(even) td {
-      background: rgba(34,197,94,.18);
-    }
+    .room-F tbody tr:nth-child(odd) td { background: rgba(5,46,22,.72); }
+    .room-F tbody tr:nth-child(even) td { background: rgba(21,128,61,.56); }
 
-    .room-H tbody tr:nth-child(even) td {
-      background: rgba(168,85,247,.18);
-    }
+    .room-G tbody tr:nth-child(odd) td { background: rgba(113,63,18,.72); }
+    .room-G tbody tr:nth-child(even) td { background: rgba(202,138,4,.45); }
 
-    .room-J tbody tr:nth-child(even) td {
-      background: rgba(239,68,68,.18);
+    .room-H tbody tr:nth-child(odd) td { background: rgba(59,7,100,.72); }
+    .room-H tbody tr:nth-child(even) td { background: rgba(126,34,206,.50); }
+
+    .room-J tbody tr:nth-child(odd) td { background: rgba(127,29,29,.72); }
+    .room-J tbody tr:nth-child(even) td { background: rgba(185,28,28,.52); }
+
+    .room-D tr:hover td,
+    .room-E tr:hover td,
+    .room-F tr:hover td,
+    .room-G tr:hover td,
+    .room-H tr:hover td,
+    .room-J tr:hover td {
+      background: rgba(255,255,255,.20);
     }
 
 
